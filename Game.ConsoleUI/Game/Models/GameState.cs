@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Newtonsoft.Json;
 
     public class GameState
     {
@@ -16,7 +15,7 @@
 
         public GamePlayer CurrentPlayer
         {
-            get => currentPlayer;
+            get => this.currentPlayer;
             set
             {
                 this.currentPlayer = value;
@@ -26,7 +25,7 @@
 
         public GameChallenge CurrentChallenge
         {
-            get => gameChallenge;
+            get => this.gameChallenge;
             set
             {
                 this.gameChallenge = value;

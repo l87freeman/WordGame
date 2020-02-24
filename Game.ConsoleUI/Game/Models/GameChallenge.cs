@@ -1,5 +1,6 @@
 ﻿namespace Game.ConsoleUI.Game.Models
 {
+    using System;
     using System.Collections.Generic;
     using Newtonsoft.Json;
 
@@ -7,17 +8,29 @@
     {
         public GameChallenge(char challengeLetter)
         {
-            ChallengeLetter = challengeLetter;
+            this.Id = Guid.NewGuid().ToString();
+            this.ChallengeLetter = challengeLetter;
         }
+
+        [JsonConstructor]
+        public GameChallenge(string id, char challengeLetter)
+        {
+            this.Id = id;
+            this.ChallengeLetter = challengeLetter;
+        }
+
+        [JsonProperty]
+        public string Id { get; private set; }
 
         public char ChallengeLetter { get; }
 
+        [JsonProperty]
         public string ChallengeResolution { get; private set; }
+
+        public HashSet<string> SuggestedResolutions { get; } = new HashSet<string>();
 
         [JsonIgnore]
         public string SuggestedResolution { get; private set; }
-
-        public HashSet<string> SuggestedResolutions { get; } = new HashSet<string>();
 
         public void Suggest(string word)
         {

@@ -7,17 +7,15 @@
     using Models;
     using Serilog;
 
-    public class BotService : IBotService
+    public class BotService : BaseServiceWithLogger<BotService>, IBotService
     {
-        private readonly ILogger logger;
         private readonly IWordStorage wordStorage;
         private readonly GameState gameState;
 
         private readonly Random random = new Random();
 
-        public BotService(ILogger logger, IWordStorage wordStorage, IGameStateService stateService)
+        public BotService(ILogger logger, IWordStorage wordStorage, IGameStateService stateService) : base(logger)
         {
-            this.logger = logger;
             this.wordStorage = wordStorage;
             this.gameState = stateService.GetOrCreateGameState();
         }
@@ -34,7 +32,7 @@
                 .Where(word => suggestedWords.All(suggestedWord => !string.Equals(suggestedWord, word, StringComparison.InvariantCultureIgnoreCase)))
                 .ToList();
 
-            var wordIndex = random.Next(0, feasibleWords.Count - 1);
+            var wordIndex = this.random.Next(0, feasibleWords.Count - 1);
 
             return feasibleWords[wordIndex];
         }

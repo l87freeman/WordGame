@@ -1,28 +1,25 @@
 ﻿namespace Game.ConsoleUI.Game.Services
 {
-    using System.Linq;
     using global::Game.ConsoleUI.Interfaces.Services;
     using global::Game.ConsoleUI.Interfaces.Views;
     using Models;
     using Serilog;
 
-    public class PlayersService : IPlayersService
+    public class PlayersService : BaseServiceWithLogger<PlayersService>, IPlayersService
     {
         private readonly IGameStateService gameStateService;
         private readonly IBotService botService;
         private readonly IPlayersServiceView view;
         private readonly GameState gameState;
-        private readonly ILogger logger;
 
-        public PlayersService(ILogger logger, 
+        public PlayersService(ILogger logger,
             IGameStateService gameStateService,
             IBotService botService,
-            IPlayersServiceView view)
+            IPlayersServiceView view) : base(logger)
         {
             this.gameStateService = gameStateService;
             this.botService = botService;
             this.view = view;
-            this.logger = logger.ForContext<PlayersService>();
             this.gameState = gameStateService.GetOrCreateGameState();
         }
         

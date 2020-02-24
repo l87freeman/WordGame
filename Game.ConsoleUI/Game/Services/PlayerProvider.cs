@@ -6,14 +6,12 @@
     using Models;
     using Serilog;
 
-    public class PlayerProvider : IPlayerProvider
+    public class PlayerProvider : BaseServiceWithLogger<PlayerProvider>, IPlayerProvider
     {
-        private readonly ILogger logger;
         private readonly IPlayerProviderView view;
 
-        public PlayerProvider(ILogger logger, IPlayerProviderView view)
+        public PlayerProvider(ILogger logger, IPlayerProviderView view) : base(logger)
         {
-            this.logger = logger;
             this.view = view;
         }
 

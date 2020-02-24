@@ -1,28 +1,52 @@
 ﻿namespace Game.ConsoleUI.Game.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Text.RegularExpressions;
+    using global::Game.ConsoleUI.Game.Models;
     using global::Game.ConsoleUI.Interfaces.Services;
     using Infrastructure.Interfaces;
     using Serilog;
 
-    public class ValidWordVerifier : IValidWordVerifier
+    public class ValidWordVerifier : BaseServiceWithLogger<ValidWordVerifier>, IValidWordVerifier
     {
-        private readonly ILogger logger;
         private readonly IWordStorage wordStorage;
+        private readonly Regex validationPattern = new Regex("^[a-z]{2,}$", RegexOptions.IgnoreCase);
 
-        public ValidWordVerifier(ILogger logger, IWordStorage wordStorage)
+        public ValidWordVerifier(ILogger logger, IWordStorage wordStorage) : base(logger)
         {
-            this.logger = logger.ForContext<ValidWordVerifier>();
             this.wordStorage = wordStorage;
         }
 
-        public bool IsValid(string challenge)
+        private bool IsExistsInDictionary(string resolution)
         {
-            var words = this.wordStorage.GetWords(challenge[0]);
+            var words = this.wordStorage.GetWords(resolution[0]);
             var isWordFeasible = words.Any(word =>
-                string.Equals(word, challenge, StringComparison.InvariantCultureIgnoreCase));
+                string.Equals(word, resolution, StringComparison.InvariantCultureIgnoreCase));
             return isWordFeasible;
+        }
+
+        private bool IsConformToPattern(string resolution)
+        {
+            var isValidWord = this.validationPattern.IsMatch(resolution);
+
+            return isValidWord;
+        }
+
+        private bool IsNotExistsInHistory(List<GameChallenge> history, string resolution)
+        {
+            var isNotExistsInHistory = history.Where(ch => ch.ChallengeResolution != null).All(ch =>
+                !string.Equals(resolution, ch.ChallengeResolution, StringComparison.InvariantCultureIgnoreCase));
+
+            return isNotExistsInHistory;
+        }
+
+        public bool IsValid(List<GameChallenge> history, string resolution)
+        {
+            var isValidWord = this.IsConformToPattern(resolution) && this.IsNotExistsInHistory(history, resolution) && this.IsExistsInDictionary(resolution);
+
+            return isValidWord;
         }
     }
 }

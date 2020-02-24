@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using System.Linq;
     using global::Game.ConsoleUI.Infrastructure;
     using global::Game.ConsoleUI.Interfaces.Services;
     using Infrastructure.Helpers;
@@ -10,17 +11,15 @@
     using Newtonsoft.Json;
     using Serilog;
 
-    public class BackupService : IBackupService
+    public class BackupService : BaseServiceWithLogger<BackupService>, IBackupService
     {
         private const string BackUpFileName = "GameBackup.bk";
         
-        private readonly ILogger logger;
         private readonly string backupFilePath;
-        private JsonSerializerSettings serializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+        private readonly JsonSerializerSettings serializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
 
-        public BackupService(ILogger logger, IOptions<GameConfiguration> options)
+        public BackupService(ILogger logger, IOptions<GameConfiguration> options) : base(logger)
         {
-            this.logger = logger;
             this.backupFilePath = Path.Combine(options.Value.StorageFolder, BackUpFileName);
         }
 
@@ -29,9 +28,13 @@
             var restored = false;
             gameState = null;
             var storedGame = FileHelpers.FileReaderBorrower(this.backupFilePath);
-            if (storedGame != null)
+            if (storedGame != null && this.TryParseFrom(storedGame, out gameState))
             {
-                restored = this.TryParseFrom(storedGame, out gameState);
+                var challengeId = gameState.CurrentChallenge?.Id;
+                gameState.CurrentChallenge =
+                    gameState.Challenges.FirstOrDefault(ch => ch.Id == challengeId);
+
+                restored = true;
             }
 
             return restored;
@@ -43,12 +46,12 @@
             gameState = null;
             try
             {
-                gameState = JsonConvert.DeserializeObject<GameState>(storedGame, serializerSettings);
+                gameState = JsonConvert.DeserializeObject<GameState>(storedGame, this.serializerSettings);
                 parsed = true;
             }
             catch (Exception e)
             {
-                this.logger.Error(e, "Was not able to parse game state");
+                this.Logger.Error(e, "Was not able to parse game state");
             }
 
             return parsed;
@@ -59,14 +62,14 @@
             var stored = false;
             try
             {
-                var serializedState = JsonConvert.SerializeObject(gameState, serializerSettings);
+                var serializedState = JsonConvert.SerializeObject(gameState, this.serializerSettings);
                 FileHelpers.WriteToFile(this.backupFilePath, serializedState);
 
                 stored = true;
             }
             catch (Exception e)
             {
-                this.logger.Error(e, "Was not able to store game state");
+                this.Logger.Error(e, "Was not able to store game state");
             }
 
             return stored;

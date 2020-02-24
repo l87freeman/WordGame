@@ -7,9 +7,8 @@
     using Models;
     using Serilog;
 
-    public class GameStateService : IGameStateService
+    public class GameStateService : BaseServiceWithLogger<GameStateService>, IGameStateService
     {
-        private readonly ILogger logger;
         private readonly IBackupService backupService;
         private readonly IPlayerProvider playerProvider;
         private readonly IGameStateServiceView view;
@@ -17,9 +16,11 @@
 
         private bool isStateAfterRestored = false;
 
-        public GameStateService(ILogger logger, IBackupService backupService, IPlayerProvider playerProvider, IGameStateServiceView view)
+        public GameStateService(ILogger logger, 
+            IBackupService backupService,
+            IPlayerProvider playerProvider,
+            IGameStateServiceView view) : base(logger)
         {
-            this.logger = logger.ForContext<GameStateService>();
             this.backupService = backupService;
             this.playerProvider = playerProvider;
             this.view = view;
@@ -29,16 +30,18 @@
         {
             if (this.gameState == null)
             {
-                if (this.backupService.TryRestoreGame(out var gameStateRestored) 
-                    && this.view.ShouldRestoreGame(gameStateRestored))
+                if (this.backupService.TryRestoreGame(out var newGameState) 
+                    && this.view.ShouldRestoreGame(newGameState))
                 {
-                    this.gameState = gameStateRestored;
+                    
                     this.isStateAfterRestored = true;
                 }
                 else
                 {
-                    this.CreateNewState();
+                    newGameState = this.CreateNewState();
                 }
+
+                this.SetGameState(newGameState);
             }
             
             return this.gameState;
@@ -78,15 +81,19 @@
             return this.gameState.Players;
         }
 
-        private void CreateNewState()
+        private void SetGameState(GameState newGameState)
+        {
+            this.gameState = newGameState;
+            this.gameState.StateChanged += this.StoreStateChanged;
+        }
+
+        private GameState CreateNewState()
         {
             var newGameState = new GameState();
             var players = this.playerProvider.GetPlayers();
             this.AddPlayers(newGameState, players);
 
-            this.gameState = newGameState;
-
-            this.gameState.StateChanged += StoreStateChanged;
+            return newGameState;
         }
 
         private void AddPlayers(GameState newGameState, List<GamePlayer> players)
@@ -94,7 +101,7 @@
             foreach (var gamePlayer in players)
             {
                 newGameState.Players.Add(gamePlayer);
-                this.logger.Debug($"Player {gamePlayer} was added to game players");
+                this.Logger.Debug($"Player {gamePlayer} was added to game players");
             }
         }
 
@@ -102,7 +109,7 @@
         {
             if (!this.backupService.TryStoreGame(this.gameState))
             {
-                this.logger.Warning($"Was not able to store game state {this.gameState}");
+                this.Logger.Warning($"Was not able to store game state {this.gameState}");
             }
         }
     }
