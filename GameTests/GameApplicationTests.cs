@@ -3,6 +3,7 @@
     using System;
     using Game.ConsoleUI.Game;
     using Game.ConsoleUI.Interfaces;
+    using GameTests.Helpers;
     using Moq;
     using Serilog;
     using Xunit;
@@ -29,8 +30,7 @@
             var expectedInvocations = 6;
             var invocations = 0;
 
-            var loggerMock = new Mock<ILogger>();
-            loggerMock.Setup(m => m.ForContext<Application>()).Returns(loggerMock.Object);
+            var loggerMock = MockHelpers.LoggerMock<Application>();
 
             var gameManagerMock = new Mock<IGameManager>();
             gameManagerMock.Setup(m => m.NextTurn()).Callback(() => {

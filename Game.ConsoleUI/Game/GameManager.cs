@@ -10,39 +10,60 @@
     public class GameManager : BaseServiceWithLogger<GameManager>, IGameManager
     {
         private readonly IPlayersService playersService;
-        private readonly IChallengeService challengeService;
+        private readonly IValidWordVerifier challengeVerifier;
         private readonly IGameManagerView gameView;
         private readonly GameState gameState;
 
         public GameManager(ILogger logger,
             IPlayersService playersService,
-            IChallengeService challengeService,
             IGameStateService gameStateService,
+            IValidWordVerifier challengeVerifier,
             IGameManagerView gameView) : base(logger)
         {
             this.playersService = playersService;
-            this.challengeService = challengeService;
+            this.challengeVerifier = challengeVerifier;
             this.gameState = gameStateService.GetOrCreateGameState();
             this.gameView = gameView;
         }
 
         public void NextTurn()
         {
-            this.Logger.Debug("Next turn started");
-            this.gameView.Refresh(this.gameState);
-            this.playersService.Shift();
-            this.ResolveChallenge();
+            this.StartNewTurn();
+            if (this.gameState.IsChallengeResolved)
+            {
+                this.gameState.NextChallenge();
+            }
+            this.PlayerResolveChallenge();
+            this.gameState.ResolveChallenge();
         }
 
-        private void ResolveChallenge()
+        private void StartNewTurn()
+        {
+            this.Logger.Debug("Next turn started");
+            this.gameView.Refresh(this.gameState);
+        }
+
+        private void PlayerResolveChallenge()
         {
             do
             {
-                this.playersService.ResolveChallenge(this.challengeService.Challenge);
-            } while (!this.challengeService.IsResolutionValid() 
-                     || !this.playersService.ApproveResolution(this.challengeService.Challenge));
+                this.playersService.ResolveChallenge(this.gameState.CurrentChallenge);
+            } while (!this.IsResolutionValid() || !this.ApprovedByPlayers());
+        }
 
-            this.challengeService.Resolved();
+        private bool IsResolutionValid()
+        {
+            var isValid = this.challengeVerifier.IsValid(this.gameState.ChallengeHistory,
+                this.gameState.CurrentChallenge.CurrentSuggestedResolution);
+
+            return isValid;
+        }
+
+        private bool ApprovedByPlayers()
+        {
+            var approved = this.playersService.ApproveResolution(this.gameState.CurrentChallenge);
+
+            return approved;
         }
     }
 }

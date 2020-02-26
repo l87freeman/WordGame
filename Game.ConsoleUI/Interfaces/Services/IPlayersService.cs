@@ -4,7 +4,7 @@
 
     public interface IPlayersService
     {
-        void Shift();
+        //void NextPlayer();
 
         bool ApproveResolution(GameChallenge challenge);
 

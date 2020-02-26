@@ -2,7 +2,6 @@
 {
     using System;
     using System.IO;
-    using System.Linq;
     using global::Game.ConsoleUI.Infrastructure;
     using global::Game.ConsoleUI.Interfaces.Services;
     using Infrastructure.Helpers;
@@ -28,13 +27,9 @@
             var restored = false;
             gameState = null;
             var storedGame = FileHelpers.FileReaderBorrower(this.backupFilePath);
-            if (storedGame != null && this.TryParseFrom(storedGame, out gameState))
+            if (storedGame != null)
             {
-                var challengeId = gameState.CurrentChallenge?.Id;
-                gameState.CurrentChallenge =
-                    gameState.Challenges.FirstOrDefault(ch => ch.Id == challengeId);
-
-                restored = true;
+                restored = this.TryParseFrom(storedGame, out gameState);
             }
 
             return restored;

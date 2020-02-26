@@ -1,7 +1,6 @@
 ﻿namespace Game.ConsoleUI.Game.Services
 {
     using System.Collections.Generic;
-    using System.Linq;
     using global::Game.ConsoleUI.Interfaces.Services;
     using global::Game.ConsoleUI.Interfaces.Views;
     using Models;
@@ -13,8 +12,6 @@
         private readonly IPlayerProvider playerProvider;
         private readonly IGameStateServiceView view;
         private GameState gameState;
-
-        private bool isStateAfterRestored = false;
 
         public GameStateService(ILogger logger, 
             IBackupService backupService,
@@ -30,13 +27,7 @@
         {
             if (this.gameState == null)
             {
-                if (this.backupService.TryRestoreGame(out var newGameState) 
-                    && this.view.ShouldRestoreGame(newGameState))
-                {
-                    
-                    this.isStateAfterRestored = true;
-                }
-                else
+                if (!this.TryRestoreGame(out var newGameState))
                 {
                     newGameState = this.CreateNewState();
                 }
@@ -47,38 +38,10 @@
             return this.gameState;
         }
 
-        public GamePlayer NextPlayer()
+        private bool TryRestoreGame(out GameState newGameState)
         {
-            if (this.isStateAfterRestored)
-            {
-                this.isStateAfterRestored = false;
-            }
-            else
-            {
-                this.ShiftPlayers();
-            }
-
-            return this.gameState.CurrentPlayer;
-        }
-
-        private void ShiftPlayers()
-        {
-            var players = this.GetPlayers();
-            if (this.gameState.CurrentPlayer == null)
-            {
-                this.gameState.CurrentPlayer = players.First();
-            }
-            else
-            {
-                var currentPlayer = players.First(player => player.Id == this.gameState.CurrentPlayer.Id);
-                var currentIndex = players.IndexOf(currentPlayer);
-                this.gameState.CurrentPlayer = ++currentIndex > players.Count -1 ? players[0] : players[currentIndex];
-            }
-        }
-
-        public List<GamePlayer> GetPlayers()
-        {
-            return this.gameState.Players;
+            return this.backupService.TryRestoreGame(out newGameState)
+                   && this.view.ShouldRestoreGame(newGameState);
         }
 
         private void SetGameState(GameState newGameState)
@@ -100,7 +63,7 @@
         {
             foreach (var gamePlayer in players)
             {
-                newGameState.Players.Add(gamePlayer);
+                newGameState.AddPlayer(gamePlayer);
                 this.Logger.Debug($"Player {gamePlayer} was added to game players");
             }
         }

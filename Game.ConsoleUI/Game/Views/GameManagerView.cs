@@ -17,8 +17,8 @@
 
         public void Refresh(GameState gameState)
         {
-            var suggestedWords = gameState.Challenges.SelectMany(ch => ch.SuggestedResolutions).ToList();
-            var usedWords = gameState.Challenges.Where(ch => ch.ChallengeResolution != null)
+            var suggestedWords = gameState.ChallengeHistory.SelectMany(ch => ch.HistoryOfSuggestedResolutions).ToList();
+            var usedWords = gameState.ChallengeHistory.Where(ch => ch.ChallengeResolution != null)
                 .Select(ch => ch.ChallengeResolution).ToList();
 
             var message = this.Format(suggestedWords, usedWords);

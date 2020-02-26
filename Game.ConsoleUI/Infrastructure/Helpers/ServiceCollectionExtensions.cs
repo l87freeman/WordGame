@@ -37,7 +37,6 @@
                 .AddSingleton<IGameManager, GameManager>()
                 .AddSingleton<IBackupService, BackupService>()
                 .AddSingleton<IBotService, BotService>()
-                .AddSingleton<IChallengeService, ChallengeService>()
                 .AddSingleton<IValidWordVerifier, ValidWordVerifier>()
                 .AddSingleton<IGameStateService, GameStateService>()
                 .AddSingleton<IPlayerProvider, PlayerProvider>()

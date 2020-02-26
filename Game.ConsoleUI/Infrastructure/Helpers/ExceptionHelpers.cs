@@ -12,17 +12,9 @@
             }
         }
 
-        public static void ThrowOnInvalidOperationArgument(string argumentName, Func<bool> isValidFunc)
+        public static void ThrowOnInvalidOperation(string errorMessage)
         {
-            ThrowOnInvalidOperation($"{argumentName} is not valid", isValidFunc);
-        }
-
-        public static void ThrowOnInvalidOperation(string message, Func<bool> isValidFunc)
-        {
-            if (!isValidFunc())
-            {
-                throw new InvalidOperationException(message);
-            }
+            throw new InvalidOperationException(errorMessage);
         }
     }
 }

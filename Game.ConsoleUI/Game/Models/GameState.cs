@@ -3,45 +3,78 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Newtonsoft.Json;
 
     public class GameState
     {
-        private GameChallenge gameChallenge;
-        private GamePlayer currentPlayer;
+        [JsonProperty]
+        private int currentPlayerIndex = -1;
+        [JsonProperty]
+        private List<GameChallenge> challenges = new List<GameChallenge>();
+        [JsonProperty]
+        private List<GamePlayer> players = new List<GamePlayer>();
 
         public event EventHandler<EventArgs> StateChanged;
 
-        public List<GamePlayer> Players { get; } = new List<GamePlayer>();
+        [JsonIgnore]
+        public GamePlayer CurrentPlayer => this.currentPlayerIndex < 0 ? null : this.players[this.currentPlayerIndex];
 
-        public GamePlayer CurrentPlayer
+        [JsonIgnore]
+        public GameChallenge CurrentChallenge => this.challenges.LastOrDefault();
+
+        [JsonIgnore]
+        public List<GamePlayer> Players => this.players.ToList();
+
+        [JsonIgnore]
+        public List<GameChallenge> ChallengeHistory => this.challenges.ToList();
+
+        public GameChallenge NextChallenge()
         {
-            get => this.currentPlayer;
-            set
-            {
-                this.currentPlayer = value;
-                this.StateChanged?.Invoke(this, EventArgs.Empty);
-            }
+            var challenge = this.CreateChallenge();
+            this.ShiftToNextPlayer();
+            this.StateChanged?.Invoke(this, EventArgs.Empty);
+
+            return challenge;
         }
 
-        public GameChallenge CurrentChallenge
+        public void AddPlayer(GamePlayer player)
         {
-            get => this.gameChallenge;
-            set
-            {
-                this.gameChallenge = value;
-                this.StateChanged?.Invoke(this, EventArgs.Empty);
-            }
+            this.players.Add(player);
         }
 
-        public List<GameChallenge> Challenges { get; } = new List<GameChallenge>();
+        [JsonIgnore]
+        public bool IsChallengeResolved => this.CurrentChallenge == null || this.CurrentChallenge.ChallengeResolution != null;
+
+        private GameChallenge CreateChallenge()
+        {
+            var letter = this.CurrentChallenge?.ChallengeResolution?.Last() ?? 'a';
+            var challenge = new GameChallenge(letter);
+            this.challenges.Add(challenge);
+
+            return challenge;
+        }
+
+        private void ShiftToNextPlayer()
+        {
+            var lastPlayerIndex = this.players.Count - 1;
+            if (++this.currentPlayerIndex > lastPlayerIndex)
+            {
+                this.currentPlayerIndex = 0;
+            }
+        }
 
         public override string ToString()
         {
             var separator = Environment.NewLine;
-            var allPlayers = string.Join(separator, this.Players.Select(player => player.ToString()));
+            var allPlayers = string.Join(separator, this.players.Select(player => player.ToString()));
             var gameStateString =
                 $"Current challenge: {this.CurrentChallenge}{separator}Current player: {this.CurrentPlayer}{separator}All players: {allPlayers}";
             return gameStateString;
+        }
+
+        public void ResolveChallenge()
+        {
+            this.CurrentChallenge.Resolve();
         }
     }
 }

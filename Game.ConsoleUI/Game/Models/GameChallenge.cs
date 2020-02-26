@@ -2,10 +2,16 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Newtonsoft.Json;
 
     public class GameChallenge
     {
+        [JsonProperty]
+        private readonly List<string> allSuggestion = new List<string>();
+        [JsonProperty]
+        private int resolutionIndex = -1;
+
         public GameChallenge(char challengeLetter)
         {
             this.Id = Guid.NewGuid().ToString();
@@ -22,33 +28,38 @@
         [JsonProperty]
         public string Id { get; private set; }
 
+        [JsonProperty]
         public char ChallengeLetter { get; }
 
         [JsonProperty]
-        public string ChallengeResolution { get; private set; }
+        public string ChallengeResolution => this.resolutionIndex < 0 ? null : this.allSuggestion[this.resolutionIndex];
 
-        public HashSet<string> SuggestedResolutions { get; } = new HashSet<string>();
+        [JsonProperty]
+        public List<string> HistoryOfSuggestedResolutions => 
+            this.allSuggestion.ToList();
 
-        [JsonIgnore]
-        public string SuggestedResolution { get; private set; }
+        [JsonIgnore] 
+        public string CurrentSuggestedResolution { get; private set; }
 
         public void Suggest(string word)
         {
-            this.SuggestedResolution = word;
-            this.SuggestedResolutions.Add(word);
+            if (this.CurrentSuggestedResolution != null)
+            {
+                this.allSuggestion.Add(this.CurrentSuggestedResolution);
+            }
+            
+            this.CurrentSuggestedResolution = word;
         }
 
-        public void Resolve(string word)
+        public void Resolve()
         {
-            this.ChallengeResolution = word;
+            this.allSuggestion.Add(this.CurrentSuggestedResolution);
+            this.resolutionIndex = this.allSuggestion.Count - 1;
         }
 
         public override string ToString()
         {
-            var tail = this.ChallengeResolution == null
-                ? $"word suggested: {this.SuggestedResolution}"
-                : "word provided: {providedWord}";
-            return $"Current letter: {this.ChallengeLetter}, {tail}";
+            return $"Current challenge letter: {this.ChallengeLetter}";
         }
     }
 }

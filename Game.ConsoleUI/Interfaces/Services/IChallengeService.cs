@@ -9,5 +9,7 @@
         void Resolved();
 
         bool IsResolutionValid();
+
+        void CreateChallenge();
     }
 }

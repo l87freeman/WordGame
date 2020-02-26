@@ -36,15 +36,17 @@
 
         private bool IsNotExistsInHistory(List<GameChallenge> history, string resolution)
         {
-            var isNotExistsInHistory = history.Where(ch => ch.ChallengeResolution != null).All(ch =>
-                !string.Equals(resolution, ch.ChallengeResolution, StringComparison.InvariantCultureIgnoreCase));
+            var wasSuggested = history.SelectMany(h => h.HistoryOfSuggestedResolutions).Any(suggestedResolution =>
+                string.Equals(resolution, suggestedResolution, StringComparison.InvariantCultureIgnoreCase));
 
-            return isNotExistsInHistory;
+            return !wasSuggested;
         }
 
         public bool IsValid(List<GameChallenge> history, string resolution)
         {
-            var isValidWord = this.IsConformToPattern(resolution) && this.IsNotExistsInHistory(history, resolution) && this.IsExistsInDictionary(resolution);
+            var isValidWord = this.IsConformToPattern(resolution) 
+                              && this.IsNotExistsInHistory(history, resolution) 
+                              && this.IsExistsInDictionary(resolution);
 
             return isValidWord;
         }

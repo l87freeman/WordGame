@@ -4,34 +4,43 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
+    using global::Game.ConsoleUI.Game.Services;
     using Helpers;
     using Interfaces;
     using Microsoft.Extensions.Options;
+    using Serilog;
 
-    public class FileWordProvider : IWordProvider
+    public class FileWordProvider : BaseServiceWithLogger<FileWordProvider>, IWordProvider
     {
-        private bool isInitialized = false;
         private readonly Dictionary<char, HashSet<string>> wordStorage = new Dictionary<char, HashSet<string>>();
+        private readonly Task initializationTask;
 
-        public FileWordProvider(IOptions<GameConfiguration> config)
+        public FileWordProvider(IOptions<GameConfiguration> config, ILogger logger) : base(logger)
         {
             ExceptionHelpers.ThrowOnNullArgument(nameof(config), config);
 
             var fileName = config.Value.DictionaryFile;
             var fileFolder = config.Value.DictionaryFolder;
             var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileFolder, fileName);
-            this.InitializeStorageAsync(filePath);
+            this.initializationTask = this.InitializeStorageAsync(filePath);
         }
 
         private Task InitializeStorageAsync(string fileLocation)
         {
-            return Task.Run(() =>
+            return Task.Run(() => { this.ReadFromFile(fileLocation); });
+        }
+
+        private void ReadFromFile(string fileLocation)
+        {
+            try
             {
                 FileHelpers.FileReaderBorrower(fileLocation, this.StoreWord);
-            }).ContinueWith(_ =>
+            }
+            catch (Exception exception)
             {
-                this.isInitialized = true;
-            });
+                this.Logger.Error(exception, "Error occured while trying to read dictionary");
+                ExceptionHelpers.ThrowOnInvalidOperation("Was not able to read word dictionary");
+            }
         }
 
         private void StoreWord(string word)
@@ -61,7 +70,7 @@
 
         public Dictionary<char, HashSet<string>> GetWords()
         {
-            while (!this.isInitialized) ;
+            this.initializationTask.GetAwaiter().GetResult();
 
             return this.wordStorage;
         }

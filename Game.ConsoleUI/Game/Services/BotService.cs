@@ -24,8 +24,8 @@
         {
             var letter = challenge.ChallengeLetter;
             var words = this.wordStorage.GetWords(letter);
-            var usedWords = this.gameState.Challenges.Select(ch => ch.ChallengeResolution);
-            var suggestedWords = this.gameState.Challenges.SelectMany(ch => ch.SuggestedResolutions);
+            var usedWords = this.gameState.ChallengeHistory.Select(ch => ch.ChallengeResolution);
+            var suggestedWords = this.gameState.ChallengeHistory.SelectMany(ch => ch.HistoryOfSuggestedResolutions);
 
             var feasibleWords = words
                 .Where(word => usedWords.All(usedWord => !string.Equals(usedWord, word, StringComparison.InvariantCultureIgnoreCase)))
