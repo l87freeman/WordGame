@@ -4,9 +4,9 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
-    using global::Game.ConsoleUI.Game.Services;
-    using Helpers;
-    using Interfaces;
+    using Game.ConsoleUI.Infrastructure.Helpers;
+    using Game.ConsoleUI.Infrastructure.Interfaces;
+    using Game.ConsoleUI.WordGame.Services;
     using Microsoft.Extensions.Options;
     using Serilog;
 

@@ -1,8 +1,8 @@
 ﻿namespace Game.ConsoleUI
 {
     using System;
-    using Infrastructure.Helpers;
-    using Interfaces;
+    using Game.ConsoleUI.Infrastructure.Helpers;
+    using Game.ConsoleUI.Interfaces;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Serilog;

@@ -1,8 +1,8 @@
 ﻿namespace GameTests
 {
     using System;
-    using Game.ConsoleUI.Game;
     using Game.ConsoleUI.Interfaces;
+    using Game.ConsoleUI.WordGame;
     using GameTests.Helpers;
     using Moq;
     using Serilog;

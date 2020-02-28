@@ -1,12 +1,12 @@
 ﻿namespace Game.ConsoleUI.Infrastructure.Helpers
 {
-    using ConsoleUI.Interfaces;
-    using ConsoleUI.Interfaces.Services;
-    using ConsoleUI.Interfaces.Views;
-    using Game;
-    using Game.Services;
-    using Game.Views;
-    using Interfaces;
+    using Game.ConsoleUI.Infrastructure.Interfaces;
+    using Game.ConsoleUI.Interfaces;
+    using Game.ConsoleUI.Interfaces.Services;
+    using Game.ConsoleUI.Interfaces.Views;
+    using Game.ConsoleUI.WordGame;
+    using Game.ConsoleUI.WordGame.Services;
+    using Game.ConsoleUI.WordGame.Views;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;

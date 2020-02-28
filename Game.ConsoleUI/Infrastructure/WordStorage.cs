@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Helpers;
-    using Interfaces;
+    using Game.ConsoleUI.Infrastructure.Helpers;
+    using Game.ConsoleUI.Infrastructure.Interfaces;
 
     public class WordStorage : IWordStorage
     {

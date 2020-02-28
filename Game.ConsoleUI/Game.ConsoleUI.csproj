@@ -3,8 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssemblyName>WordGame.ConsoleUI</AssemblyName>
-    <RootNamespace>WordGame.ConsoleUI</RootNamespace>
+    <AssemblyName>Game.ConsoleUI</AssemblyName>
+    <RootNamespace>Game.ConsoleUI</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

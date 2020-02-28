@@ -1,7 +1,7 @@
 ﻿namespace Game.ConsoleUI.Interfaces.Services
 {
     using System.Collections.Generic;
-    using Game.Models;
+    using Game.ConsoleUI.WordGame.Models;
 
     public interface IPlayerProvider
     {

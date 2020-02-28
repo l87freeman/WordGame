@@ -1,7 +1,7 @@
 ﻿namespace Game.ConsoleUI.Interfaces.Services
 {
     using System.Collections.Generic;
-    using global::Game.ConsoleUI.Game.Models;
+    using Game.ConsoleUI.WordGame.Models;
 
     public interface IValidWordVerifier
     {

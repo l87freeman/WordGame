@@ -1,6 +1,6 @@
 ﻿namespace Game.ConsoleUI.Interfaces.Services
 {
-    using Game.Models;
+    using Game.ConsoleUI.WordGame.Models;
 
     public interface IPlayersService
     {

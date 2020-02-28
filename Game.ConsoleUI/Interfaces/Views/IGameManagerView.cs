@@ -1,6 +1,6 @@
 ﻿namespace Game.ConsoleUI.Interfaces.Views
 {
-    using Game.Models;
+    using Game.ConsoleUI.WordGame.Models;
 
     public interface IGameManagerView
     {
