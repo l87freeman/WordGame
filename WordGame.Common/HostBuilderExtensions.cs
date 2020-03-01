@@ -6,7 +6,7 @@
     using Serilog;
     using Serilog.Events;
 
-    public static class BuilderExtensions
+    public static class HostBuilderExtensions
     {
         public const string BaseDirectoryVariableName = "BASEDIR";
 

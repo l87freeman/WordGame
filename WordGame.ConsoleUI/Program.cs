@@ -1,6 +1,14 @@
 ﻿namespace WordGame.ConsoleUI
 {
     using System;
+    using Domain;
+    using Domain.Interfaces;
+    using Domain.Views;
+    using Domain.Views.Interfaces;
+    using Extensions;
+    using Infrastructure;
+    using Infrastructure.Interfaces;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using WordGame.Common;
@@ -17,7 +25,18 @@
         {
             var host = new HostBuilder()
                 .WithJsonConfiguration("appsettings.json")
-                .ConfigureServices((hostContext, services) => { services.AddHostedService<GameClient>(); })
+                .ConfigureServices((hostContext, services) =>
+                {
+                    var configSection = hostContext.Configuration.GetSection(nameof(GameConfiguration));
+                    services.Configure<GameConfiguration>(configSection);
+                    //services.AddHubClient(configSection.GetValue<string>("ServerAddress"));
+                    services.AddSingleton<IGameManager, GameManager>();
+                    services.AddSingleton<IPlayerNameProvider, PlayerNameProvider>();
+                    services.AddHostedService<GameService>();
+                    services.AddSingleton<IGameClient, GameClient>();
+                    services.AddSingleton<IBaseView, ConsoleView>();
+
+                })
                 .WithSerilog();
 
             return host;

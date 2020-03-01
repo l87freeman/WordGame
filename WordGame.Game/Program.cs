@@ -19,7 +19,7 @@ namespace WordGame.Game
                 .WithJsonConfiguration("appsettings.json", "appsettings.Develop.json")
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseUrls("http://*:44301");
+                    webBuilder.UseUrls("http://*:8085");
                     webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
                     webBuilder.UseStartup<Startup>();
                 })
