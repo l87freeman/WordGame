@@ -1,17 +1,19 @@
 ﻿namespace WordGame.ConsoleUI.Domain.Views.Interfaces
 {
-    using System.Collections.Generic;
+    using System;
 
     public interface IBaseView
     {
+        event EventHandler<EventArgs> BotInteractionChanged;
+
         bool WaitForConfirmation(string message);
 
         void ShowWarning(string message);
 
-        List<string> WaitForInputList(string message);
-
         string WaitForInput(string message);
 
         void Refresh(string message);
+
+        void Display(string message);
     }
 }

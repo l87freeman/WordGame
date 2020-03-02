@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Interfaces;
 
     public class ConsoleView : IBaseView
@@ -9,10 +11,32 @@
         private const string ConfirmSign = "Y";
         private const string DeclineSign = "N";
 
+        public ConsoleView()
+        {
+            Console.CancelKeyPress += this.BotInteraction;
+        }
+
+        private void BotInteraction(object sender, ConsoleCancelEventArgs e)
+        {
+            e.Cancel = true;
+            if (this.WaitForConfirmation("Do you wand to add/remove a bot?"))
+            {
+                this.BotInteractionChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public event EventHandler<EventArgs> BotInteractionChanged;
+
         public void Refresh(string linesToDisplay)
         {
             Console.Clear();
             Console.Write(linesToDisplay);
+            this.DisplayMessageInColor("To add a bot click Ctrl + C", ConsoleColor.DarkYellow);
+        }
+
+        public void Display(string message)
+        {
+            this.DisplayMessageInColor(message, ConsoleColor.DarkBlue);
         }
 
         public string WaitForInput(string displayMessage)
@@ -21,27 +45,6 @@
             var input = Console.ReadLine();
 
             return input;
-        }
-
-        public List<string> WaitForInputList(string displayMessage)
-        {
-            var inputList = new List<string>();
-            var inputFinished = false;
-            displayMessage = $"{displayMessage}, or enter {DeclineSign} to stop";
-            do
-            {
-                var entered = this.WaitForInput(displayMessage);
-                if (string.Equals(entered, DeclineSign, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    inputFinished = true;
-                }
-                else
-                {
-                    inputList.Add(entered);
-                }
-            } while (!inputFinished);
-            
-            return inputList;
         }
 
         public bool WaitForConfirmation(string displayMessage)

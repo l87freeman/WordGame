@@ -7,12 +7,16 @@
     {
         event EventHandler<bool> Approved;
 
-        event EventHandler<Challenge> Resolved;
+        event EventHandler<string> Resolved;
+
+        event EventHandler<EventArgs> BotInteractionChanged;
 
         void RefreshUi(Game game);
 
         void Approve(Suggestion suggestion);
 
         void Resolve(Challenge challenge);
+
+        void Display(string message);
     }
 }

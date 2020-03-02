@@ -29,7 +29,6 @@
                 {
                     var configSection = hostContext.Configuration.GetSection(nameof(GameConfiguration));
                     services.Configure<GameConfiguration>(configSection);
-                    //services.AddHubClient(configSection.GetValue<string>("ServerAddress"));
                     services.AddSingleton<IGameManager, GameManager>();
                     services.AddSingleton<IPlayerNameProvider, PlayerNameProvider>();
                     services.AddHostedService<GameService>();
