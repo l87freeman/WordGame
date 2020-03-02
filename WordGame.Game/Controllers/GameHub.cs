@@ -30,18 +30,12 @@
             await this.gameManager.ApplyResolutionAsync(player, message);
         }
 
-        public async Task ChangedBotInteraction()
-        {
-            var player = this.GetPlayerInfo();
-            await this.gameManager.ChangedBotInteractionAsync(player);
-        }
-
         public override async Task OnConnectedAsync()
         {
             var player = this.GetPlayerInfo();
             this.logger.LogDebug($"Player {player} joined this game");
             await base.OnConnectedAsync();
-            await this.Clients.All.SendAsync("Notify", $"{player} joined this game");
+            this.gameManager.PlayerJoined(player);
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
@@ -49,7 +43,7 @@
             var player = this.GetPlayerInfo();
             this.logger.LogDebug($"Player {player} left this game");
             await base.OnDisconnectedAsync(exception);
-            await this.Clients.All.SendAsync("Notify", $"{player} left a game");
+            this.gameManager.PlayerLeft(player);
         }
 
         private PlayerInfo GetPlayerInfo()
@@ -58,10 +52,11 @@
             var connectionId = context.Connection.Id;
             if(!context.Request.Cookies.TryGetValue("userName", out var playerName))
             {
+                this.logger.LogError($"For connection {connectionId} from {context.Connection.RemoteIpAddress} player name was not set");
                 playerName = "Jon Dow";
             }
 
-            return new PlayerInfo { Connection = connectionId, Name = playerName };
+            return new PlayerInfo(connectionId, playerName);
         }
     }
 }

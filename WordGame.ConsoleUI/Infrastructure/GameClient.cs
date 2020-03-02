@@ -63,11 +63,12 @@
             this.connection.On<Game>("Updated", game => { this.gameManager.RefreshUi(game); });
             this.connection.On<Suggestion>("NeedApproval", suggestion => { this.gameManager.Approve(suggestion); });
             this.connection.On<Challenge>("Challenge", challenge => { this.gameManager.Resolve(challenge); });
-            this.connection.On<string>("Notify", message => { this.gameManager.Display(message); });
+            this.connection.On<string>("Notify", message =>
+            {
+                this.gameManager.Display(message);
+            });
             this.gameManager.Approved +=
                 (sender, arg) => this.connection.InvokeAsync<bool>("Approved", arg);
-            this.gameManager.BotInteractionChanged +=
-                (sender, arg) => this.connection.InvokeAsync("ChangedBotInteraction");
             this.gameManager.Resolved +=
                 (sender, arg) => this.connection.InvokeAsync<string>("Resolved", arg);
         }

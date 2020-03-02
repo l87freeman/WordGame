@@ -9,8 +9,6 @@
 
         event EventHandler<string> Resolved;
 
-        event EventHandler<EventArgs> BotInteractionChanged;
-
         void RefreshUi(Game game);
 
         void Approve(Suggestion suggestion);

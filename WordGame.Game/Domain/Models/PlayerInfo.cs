@@ -2,9 +2,15 @@
 {
     public class PlayerInfo
     {
-        public string Connection { get; set; }
+        public PlayerInfo(string connection, string name)
+        {
+            Connection = connection;
+            Name = name;
+        }
 
-        public string Name { get; set; }
+        public string Connection { get; }
+
+        public string Name { get; }
 
         public override string ToString()
         {

@@ -27,4 +27,8 @@
     <ProjectReference Include="..\WordGame.Common\WordGame.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
 </Project>

@@ -1,8 +1,5 @@
 ﻿namespace WordGame.Game.Domain
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading;
     using System.Threading.Tasks;
     using Interfaces;
     using Microsoft.AspNetCore.SignalR;
@@ -14,14 +11,15 @@
     {
         private readonly ILogger<GameManager> logger;
         private readonly IHubContext<GameHub> hubContext;
-        private SpinLock locker = new SpinLock();
-        private bool isLockTaken = false;
-        private Game game;
+        private readonly IPlayerService playerService;
 
-        public GameManager(ILogger<GameManager> logger, IHubContext<GameHub> hubContext)
+
+        public GameManager(ILogger<GameManager> logger, IHubContext<GameHub> hubContext, IPlayerService playerService)
         {
             this.logger = logger;
             this.hubContext = hubContext;
+            this.playerService = playerService;
+            this.playerService.PlayersChanged += this.NotifyPlayersChanged;
         }
 
         public Task ApplyApprovalAsync(PlayerInfo player, bool isApproved)
@@ -34,36 +32,20 @@
             return Task.CompletedTask;
         }
 
-        public async Task ChangedBotInteractionAsync(PlayerInfo player)
+
+        public void PlayerJoined(PlayerInfo player)
         {
-            await this.ExecuteWithLock(() =>
-            {
-                this.game.AddOrRemoveBot();
-                return Task.CompletedTask;
-            });
+            this.playerService.Add(player);
         }
 
-        private async Task ExecuteWithLock(Func<Task> actionToExecute)
+        public void PlayerLeft(PlayerInfo player)
         {
-            try
-            {
-                this.locker.Enter(ref this.isLockTaken);
-                await actionToExecute();
-            }
-            catch (Exception e)
-            {
-                this.logger.LogError(e, "Error occured while performing action");
-            }
-            finally
-            {
-                this.locker.Exit();
-            }
+            this.playerService.Remove(player);
         }
 
-        private async Task CreateChallenge()
+        private void NotifyPlayersChanged(object sender, string message)
         {
-            var challenge = new Challenge {Letter = 'a', Suggestions = new List<Suggestion>()};
-            await this.hubContext.Clients.All.SendAsync("Challenge", challenge);
+            this.hubContext.Clients.All.SendAsync("Notify", message).GetAwaiter().GetResult();
         }
     }
 }

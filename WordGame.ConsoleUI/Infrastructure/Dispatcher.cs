@@ -27,7 +27,7 @@
             }
         }
 
-        public void Invoke(Action actionToPerform)
+        public void PlanRoutine(Action actionToPerform)
         {
             var task = new Task(() =>
             {

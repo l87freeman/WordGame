@@ -1,7 +1,6 @@
 ﻿namespace WordGame.ConsoleUI.Domain
 {
     using System;
-    using System.Threading.Tasks;
     using Interfaces;
     using Models;
     using WordGame.ConsoleUI.Domain.Views.Interfaces;
@@ -17,25 +16,14 @@
 
         public event EventHandler<bool> Approved;
 
-        public event EventHandler<EventArgs> BotInteractionChanged;
-
         public GameManager(IBaseView baseView)
         {
             this.baseView = baseView;
-            this.ListenToOrRemoveBot();
-        }
-
-        private void ListenToOrRemoveBot()
-        {
-            this.baseView.BotInteractionChanged += (s, e) => { Task.Run(() =>
-                {
-                    this.BotInteractionChanged?.Invoke(this, EventArgs.Empty);
-                }); };
         }
 
         public void RefreshUi(Game game)
         {
-            this.dispatcher.Invoke(() =>
+            this.dispatcher.PlanRoutine(() =>
             {
                 this.baseView.Refresh(game.ToString());
             });
@@ -43,7 +31,7 @@
 
         public void Approve(Suggestion suggestion)
         {
-            this.dispatcher.Invoke(() =>
+            this.dispatcher.PlanRoutine(() =>
             {
                 var approved = this.baseView.WaitForConfirmation(suggestion.ToString());
                 this.Approved?.Invoke(this, approved);
@@ -52,7 +40,7 @@
 
         public void Resolve(Challenge challenge)
         {
-            this.dispatcher.Invoke(() =>
+            this.dispatcher.PlanRoutine(() =>
             {
                 var suggestion = this.GetResolution(challenge);
                 this.Resolved?.Invoke(this, suggestion);
@@ -61,7 +49,7 @@
 
         public void Display(string message)
         {
-            this.dispatcher.Invoke(() =>
+            this.dispatcher.PlanRoutine(() =>
             {
                 this.baseView.Display(message);
             });

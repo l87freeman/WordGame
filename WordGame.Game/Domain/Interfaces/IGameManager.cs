@@ -9,6 +9,8 @@
 
         Task ApplyResolutionAsync(PlayerInfo player, string message);
         
-        Task ChangedBotInteractionAsync(PlayerInfo player);
+        void PlayerJoined(PlayerInfo player);
+
+        void PlayerLeft(PlayerInfo player);
     }
 }

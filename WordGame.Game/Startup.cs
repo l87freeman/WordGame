@@ -23,6 +23,7 @@ namespace WordGame.Game
         {
             services.Configure<GameConfiguration>(this.Configuration.GetSection(nameof(GameConfiguration)));
             services.AddSingleton<IGameManager, GameManager>();
+            services.AddSingleton<IPlayerService, PlayerService>();
             services.AddControllers();
             services.AddSignalR();
         }
