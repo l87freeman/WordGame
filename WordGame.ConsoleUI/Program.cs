@@ -5,7 +5,6 @@
     using Domain.Interfaces;
     using Domain.Views;
     using Domain.Views.Interfaces;
-    using Extensions;
     using Infrastructure;
     using Infrastructure.Interfaces;
     using Microsoft.Extensions.Configuration;

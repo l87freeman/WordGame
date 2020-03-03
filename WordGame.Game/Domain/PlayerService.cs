@@ -54,8 +54,6 @@
 
                 if (message != null)
                 {
-                    //to wait until subscription created on client
-                    Task.Delay(100).GetAwaiter().GetResult();
                     this.PlayersChanged?.Invoke(this, message);
                     this.logger.LogDebug(message);
                 }

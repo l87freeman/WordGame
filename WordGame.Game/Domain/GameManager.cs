@@ -45,6 +45,7 @@
 
         private void NotifyPlayersChanged(object sender, string message)
         {
+            Task.Delay(100).GetAwaiter().GetResult();
             this.hubContext.Clients.All.SendAsync("Notify", message).GetAwaiter().GetResult();
         }
     }
