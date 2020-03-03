@@ -47,6 +47,7 @@
         {
             Task.Delay(100).GetAwaiter().GetResult();
             this.hubContext.Clients.All.SendAsync("Notify", message).GetAwaiter().GetResult();
+            this.logger.LogDebug($"Message {message} was sent");
         }
     }
 }

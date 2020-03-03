@@ -33,7 +33,7 @@
                     services.AddHostedService<GameService>();
                     services.AddSingleton<IGameClient, GameClient>();
                     services.AddSingleton<IBaseView, ConsoleView>();
-
+                    services.AddSingleton<IDispatcher, Dispatcher>();
                 })
                 .WithSerilog();
 

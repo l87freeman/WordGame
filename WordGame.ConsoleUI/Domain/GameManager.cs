@@ -5,19 +5,21 @@
     using Models;
     using WordGame.ConsoleUI.Domain.Views.Interfaces;
     using WordGame.ConsoleUI.Infrastructure;
+    using WordGame.ConsoleUI.Infrastructure.Interfaces;
 
     public class GameManager : IGameManager
     {
         private readonly IBaseView baseView;
 
-        private readonly Dispatcher dispatcher = new Dispatcher();
+        private readonly IDispatcher dispatcher;
 
         public event EventHandler<string> Resolved;
 
         public event EventHandler<bool> Approved;
 
-        public GameManager(IBaseView baseView)
+        public GameManager(IBaseView baseView, IDispatcher dispatcher)
         {
+            this.dispatcher = dispatcher;
             this.baseView = baseView;
         }
 
@@ -53,7 +55,6 @@
             {
                 this.baseView.Display(message);
             });
-            
         }
 
         private string GetResolution(Challenge challenge)

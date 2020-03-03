@@ -2,19 +2,20 @@
 {
     using System;
     using System.Collections.Concurrent;
-    using System.Threading;
-    using System.Threading.Tasks;
     using System.Timers;
+    using Microsoft.Extensions.Logging;
+    using WordGame.ConsoleUI.Infrastructure.Interfaces;
     using Timer = System.Timers.Timer;
 
-    public class Dispatcher : IDisposable
+    public class Dispatcher : IDispatcher
     {
-        private readonly ConcurrentQueue<Task> tasksToPerform = new ConcurrentQueue<Task>();
-        private readonly ManualResetEventSlim resetEvent = new ManualResetEventSlim(true);
+        private readonly ILogger<Dispatcher> logger;
+        private readonly ConcurrentQueue<Action> tasksToPerform = new ConcurrentQueue<Action>();
         private readonly Timer timer = new Timer(50);
 
-        public Dispatcher()
+        public Dispatcher(ILogger<Dispatcher> logger)
         {
+            this.logger = logger;
             this.timer.Elapsed += this.RunTasks;
             this.timer.Start();
         }
@@ -23,25 +24,23 @@
         {
             if (this.tasksToPerform.TryDequeue(out var taskToRun))
             {
-                taskToRun.Start();
+                taskToRun();
             }
         }
 
         public void PlanRoutine(Action actionToPerform)
         {
-            var task = new Task(() =>
+            Action task = () =>
             {
                 try
                 {
-                    this.resetEvent.Wait();
-                    this.resetEvent.Reset();
                     actionToPerform();
                 }
-                finally
+                catch (Exception e)
                 {
-                    this.resetEvent.Set();
+                    this.logger.LogError(e, "Exception occured while performing routine");
                 }
-            });
+            };
             this.tasksToPerform.Enqueue(task);
         }
 
