@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Interfaces;
@@ -22,6 +23,8 @@
         }
 
         public event EventHandler<string> PlayersChanged;
+
+        public event EventHandler<EventArgs> OnePlayerLeft;
 
         public void Add(PlayerInfo player)
         {
@@ -70,6 +73,47 @@
 
             this.logger.LogDebug(message);
             this.PlayersChanged?.Invoke(this, message);
+            
+            if (this.players.Count == 1)
+            {
+                this.OnePlayerLeft?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        
+
+        public PlayerInfo NextPlayer(PlayerInfo currentPlayer)
+        {
+            PlayerInfo nextPlayer = null;
+            this.ExecuteWithSync(() =>
+            {
+                bool currentPlayerFound = false;
+                foreach (var player in players)
+                {
+                    if (player.Key == currentPlayer.Connection)
+                    {
+                        currentPlayerFound = true;
+                        continue;
+                    }
+
+                    if (currentPlayerFound)
+                    {
+                        nextPlayer = player.Value;
+                        break;
+                    }
+                }
+
+                if (!currentPlayerFound)
+                {
+                    this.logger.LogError($"{currentPlayer} player was not found in players collection");
+                    throw new InvalidOperationException(
+                        $"Was not able to found a player {currentPlayer} in players collection");
+                }
+
+                nextPlayer ??= players.First().Value;
+            });
+
+            return nextPlayer;
         }
 
         private void ExecuteWithSync(Action actionToExecute)
