@@ -43,7 +43,7 @@
             this.playerService.Remove(player);
         }
 
-        private void NotifyPlayersChanged(object sender, string message)
+        private void NotifyPlayersChanged(object sender, PlayerEventData eventData)
         {
             Task.Delay(100).GetAwaiter().GetResult();
             this.hubContext.Clients.All.SendAsync("Notify", message).GetAwaiter().GetResult();

@@ -12,7 +12,7 @@
         private readonly IPlayerService playerService;
 
         public enum State { InProgress, Stopped }
-        public enum Trigger { NoPlayers, PlayersJoined, NextPlayer }
+        public enum Trigger { NoPlayers, OnePlayerLeft, PlayersJoined, NextPlayer }
 
         private State state;
         private StateMachine<State, Trigger> machine;
@@ -34,16 +34,17 @@
             this.state = State.Stopped;
             this.machine.Configure(State.InProgress)
                 .Permit(Trigger.NoPlayers, State.Stopped)
+                .Permit(Trigger.OnePlayerLeft, State.Stopped)
                 .PermitReentryIf(Trigger.NextPlayer, () => this.CurrentChallenge.IsSolved,
                     "Current challenge is not resolved")
-                .OnEntry(this.StopGame);
+                .OnEntry(this.OnNextTurn);
 
             this.machine.Configure(State.Stopped)
                 .Permit(Trigger.PlayersJoined, State.InProgress)
-                .OnEntry(this.NextTurn);
+                .OnEntry(this.OnStopGame);
         }
 
-        private void NextTurn()
+        private void OnNextTurn()
         {
             this.CurrentChallenge = this.challengeProvider.CreateChallenge(this.CurrentChallenge);
             this.Challenges.Add(this.CurrentChallenge);
@@ -51,7 +52,7 @@
             this.CurrentChallenge.CurrentPlayer = this.playerService.NextPlayer(this.CurrentChallenge.CurrentPlayer);
         }
 
-        private void StopGame()
+        private void OnStopGame()
         {
             this.CurrentChallenge = null;
             this.Challenges.Clear();

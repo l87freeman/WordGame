@@ -5,9 +5,7 @@
 
     public interface IPlayerService
     {
-        event EventHandler<string> PlayersChanged;
-
-        event EventHandler<EventArgs> OnePlayerLeft;
+        event EventHandler<PlayerEventData> PlayersChanged;
 
         void Add(PlayerInfo player);
 

@@ -2,9 +2,9 @@
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
-    using System.Threading.Tasks;
     using Interfaces;
     using Microsoft.Extensions.Logging;
     using Models;
@@ -12,7 +12,7 @@
     public class PlayerService : IPlayerService
     {
         private readonly ILogger<PlayerService> logger;
-        private readonly ConcurrentDictionary<string, PlayerInfo> players = new ConcurrentDictionary<string, PlayerInfo>();
+        private readonly List<PlayerInfo> players = new List<PlayerInfo>();
         private readonly BotPlayerInfo botInfo = new BotPlayerInfo();
         private SpinLock locker = new SpinLock();
         private bool botAdded = false;
@@ -22,98 +22,92 @@
             this.logger = logger;
         }
 
-        public event EventHandler<string> PlayersChanged;
-
-        public event EventHandler<EventArgs> OnePlayerLeft;
+        public event EventHandler<PlayerEventData> PlayersChanged;
 
         public void Add(PlayerInfo player)
         {
-            players[player.Connection] = player;
-            var message = $"New player {player} joined this game";
-            this.logger.LogDebug(message);
-            this.PlayersChanged?.Invoke(this, message);
+            this.ExecuteWithSync(() =>
+            {
+                this.players.Add(player);
+            });
+            
+            this.logger.LogDebug($"{player} was added to players collection");
+            this.Invoke(player, PlayerEventType.PlayerJoined);
 
             this.VerifyIfBotNeeded();
+        }
+
+        private void Invoke(PlayerInfo player, PlayerEventType eventType)
+        {
+            var eventData = new PlayerEventData
+                {EventByPlayer = player, EventType = eventType, PlayersCount = this.players.Count};
+
+            this.PlayersChanged?.Invoke(this, eventData);
         }
 
         private void VerifyIfBotNeeded()
         {
             this.ExecuteWithSync(() =>
             {
-                string message = null;
                 if (players.Count == 1 && !this.botAdded)
                 {
-                    this.players.TryAdd(this.botInfo.Connection, botInfo);
+                    this.Add(this.botInfo);
                     this.botAdded = true;
-                    message = $"Bot {botInfo} was added to game";
-                    
                 }
                 else if(this.botAdded)
                 {
-                    this.players.TryRemove(this.botInfo.Connection, out var botInfoRemoved);
+                    this.Remove(this.botInfo);
                     this.botAdded = false;
-                    message = $"Bot {botInfo} was removed from game";
-                }
-
-                if (message != null)
-                {
-                    this.PlayersChanged?.Invoke(this, message);
-                    this.logger.LogDebug(message);
                 }
             });
         }
 
         public void Remove(PlayerInfo player)
         {
-            var message = $"player {player} left this game";
-            if (!this.players.TryRemove(player.Connection, out var removePlayer))
+            this.ExecuteWithSync(() =>
             {
-                this.logger.LogWarning($"Was not able to remove player {player} from players");
-            }
-
-            this.logger.LogDebug(message);
-            this.PlayersChanged?.Invoke(this, message);
+                if (!this.players.Remove(player))
+                {
+                    this.logger.LogWarning($"Was not able to remove player {player} from players");
+                }
+                else
+                {
+                    this.logger.LogDebug($"{player} was removed from players collection");
+                }
+            });
             
-            if (this.players.Count == 1)
-            {
-                this.OnePlayerLeft?.Invoke(this, EventArgs.Empty);
-            }
+            this.Invoke(player, PlayerEventType.PlayerLeft);
         }
-
-        
 
         public PlayerInfo NextPlayer(PlayerInfo currentPlayer)
         {
             PlayerInfo nextPlayer = null;
             this.ExecuteWithSync(() =>
             {
-                bool currentPlayerFound = false;
-                foreach (var player in players)
-                {
-                    if (player.Key == currentPlayer.Connection)
-                    {
-                        currentPlayerFound = true;
-                        continue;
-                    }
-
-                    if (currentPlayerFound)
-                    {
-                        nextPlayer = player.Value;
-                        break;
-                    }
-                }
-
-                if (!currentPlayerFound)
+                if (!this.TryShiftToNextPlayer(currentPlayer, out nextPlayer))
                 {
                     this.logger.LogError($"{currentPlayer} player was not found in players collection");
                     throw new InvalidOperationException(
                         $"Was not able to found a player {currentPlayer} in players collection");
                 }
-
-                nextPlayer ??= players.First().Value;
             });
 
+            this.Invoke(nextPlayer, PlayerEventType.NextPlayer);
             return nextPlayer;
+        }
+
+        private bool TryShiftToNextPlayer(PlayerInfo currentPlayer, out PlayerInfo nextPlayer)
+        {
+            nextPlayer = null;
+            var currentPlayerIndex = this.players.IndexOf(currentPlayer);
+
+            if (currentPlayerIndex != -1 && this.players.Count > 0)
+            {
+                var nextPlayerIndex = ++currentPlayerIndex == this.players.Count ? 0 : currentPlayerIndex;
+                nextPlayer = this.players[nextPlayerIndex];
+            }
+
+            return currentPlayer != nextPlayer;
         }
 
         private void ExecuteWithSync(Action actionToExecute)
