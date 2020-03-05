@@ -2,6 +2,7 @@
 {
     using System;
     using Models;
+    using Models.Players;
 
     public interface IPlayerService
     {
@@ -11,6 +12,6 @@
 
         void Remove(PlayerInfo player);
 
-        PlayerInfo NextPlayer(PlayerInfo currentPlayer);
+        void NextPlayer();
     }
 }

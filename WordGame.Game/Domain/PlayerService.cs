@@ -1,19 +1,19 @@
 ﻿namespace WordGame.Game.Domain
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading;
+    using System.Threading.Tasks;
     using Interfaces;
     using Microsoft.Extensions.Logging;
     using Models;
+    using Models.Players;
 
     public class PlayerService : IPlayerService
     {
         private readonly ILogger<PlayerService> logger;
         private readonly List<PlayerInfo> players = new List<PlayerInfo>();
-        private readonly BotPlayerInfo botInfo = new BotPlayerInfo();
+        private readonly BotPlayerInfo botPlayer = new BotPlayerInfo();
         private SpinLock locker = new SpinLock();
         private bool botAdded = false;
 
@@ -23,6 +23,8 @@
         }
 
         public event EventHandler<PlayerEventData> PlayersChanged;
+
+        public PlayerInfo CurrentPlayer { get; private set; }
 
         public void Add(PlayerInfo player)
         {
@@ -51,13 +53,16 @@
             {
                 if (players.Count == 1 && !this.botAdded)
                 {
-                    this.Add(this.botInfo);
+                    this.Add(this.botPlayer);
                     this.botAdded = true;
+                    Task.Delay(200).GetAwaiter().GetResult();
+                    this.Invoke(this.botPlayer, PlayerEventType.PlayerJoined);
                 }
                 else if(this.botAdded)
                 {
-                    this.Remove(this.botInfo);
+                    this.Remove(this.botPlayer);
                     this.botAdded = false;
+                    this.Invoke(this.botPlayer, PlayerEventType.PlayerLeft);
                 }
             });
         }
@@ -79,21 +84,21 @@
             this.Invoke(player, PlayerEventType.PlayerLeft);
         }
 
-        public PlayerInfo NextPlayer(PlayerInfo currentPlayer)
+        public void NextPlayer()
         {
-            PlayerInfo nextPlayer = null;
             this.ExecuteWithSync(() =>
             {
-                if (!this.TryShiftToNextPlayer(currentPlayer, out nextPlayer))
+                if (!this.TryShiftToNextPlayer(this.CurrentPlayer, out var nextPlayer))
                 {
-                    this.logger.LogError($"{currentPlayer} player was not found in players collection");
+                    this.logger.LogError($"{this.CurrentPlayer} player was not found in players collection");
                     throw new InvalidOperationException(
-                        $"Was not able to found a player {currentPlayer} in players collection");
+                        $"Was not able to found a player {this.CurrentPlayer} in players collection");
                 }
+
+                this.CurrentPlayer = nextPlayer;
             });
 
-            this.Invoke(nextPlayer, PlayerEventType.NextPlayer);
-            return nextPlayer;
+            this.Invoke(this.CurrentPlayer, PlayerEventType.NextPlayer);
         }
 
         private bool TryShiftToNextPlayer(PlayerInfo currentPlayer, out PlayerInfo nextPlayer)

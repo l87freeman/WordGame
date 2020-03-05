@@ -4,6 +4,7 @@
     using System.Threading.Tasks;
     using Domain.Interfaces;
     using Domain.Models;
+    using Domain.Models.Players;
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.Extensions.Logging;
 

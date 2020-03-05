@@ -24,6 +24,8 @@ namespace WordGame.Game
             services.Configure<GameConfiguration>(this.Configuration.GetSection(nameof(GameConfiguration)));
             services.AddSingleton<IGameManager, GameManager>();
             services.AddSingleton<IPlayerService, PlayerService>();
+            services.AddSingleton<IChallengeService, ChallengeService>();
+            services.AddSingleton<IMessageProvider, MessageProvider>();
             services.AddControllers();
             services.AddSignalR();
         }

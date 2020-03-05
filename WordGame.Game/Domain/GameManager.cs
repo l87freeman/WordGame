@@ -1,9 +1,11 @@
 ﻿namespace WordGame.Game.Domain
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Interfaces;
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.Extensions.Logging;
+    using Models.Players;
     using WordGame.Game.Controllers;
     using WordGame.Game.Domain.Models;
 
@@ -12,13 +14,21 @@
         private readonly ILogger<GameManager> logger;
         private readonly IHubContext<GameHub> hubContext;
         private readonly IPlayerService playerService;
+        private readonly IChallengeService challengeService;
+        private readonly IMessageProvider messageProvider;
 
 
-        public GameManager(ILogger<GameManager> logger, IHubContext<GameHub> hubContext, IPlayerService playerService)
+        public GameManager(ILogger<GameManager> logger, 
+            IHubContext<GameHub> hubContext, 
+            IPlayerService playerService,
+            IChallengeService challengeService,
+            IMessageProvider messageProvider)
         {
             this.logger = logger;
             this.hubContext = hubContext;
             this.playerService = playerService;
+            this.challengeService = challengeService;
+            this.messageProvider = messageProvider;
             this.playerService.PlayersChanged += this.NotifyPlayersChanged;
         }
 
@@ -32,7 +42,6 @@
             return Task.CompletedTask;
         }
 
-
         public void PlayerJoined(PlayerInfo player)
         {
             this.playerService.Add(player);
@@ -45,8 +54,15 @@
 
         private void NotifyPlayersChanged(object sender, PlayerEventData eventData)
         {
-            Task.Delay(100).GetAwaiter().GetResult();
-            this.hubContext.Clients.All.SendAsync("Notify", message).GetAwaiter().GetResult();
+            var notifyTask = this.NotifyClientsAsync(eventData);
+
+            notifyTask.GetAwaiter().GetResult();
+        }
+
+        private async Task NotifyClientsAsync(PlayerEventData eventData)
+        {
+            var message = this.messageProvider.GetMessage(eventData);
+            await this.hubContext.Clients.AllExcept(new List<string>{eventData.EventByPlayer.Connection}).SendAsync("Notify", message);
             this.logger.LogDebug($"Message {message} was sent");
         }
     }

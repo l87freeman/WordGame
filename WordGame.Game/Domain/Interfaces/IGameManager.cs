@@ -1,6 +1,7 @@
 ﻿namespace WordGame.Game.Domain.Interfaces
 {
     using System.Threading.Tasks;
+    using Models.Players;
     using WordGame.Game.Domain.Models;
 
     public interface IGameManager

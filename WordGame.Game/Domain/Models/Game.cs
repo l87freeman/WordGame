@@ -1,6 +1,7 @@
 ﻿namespace WordGame.Game.Domain.Models
 {
     using System.Collections.Generic;
+    using Challenges;
     using Interfaces;
     using Microsoft.Extensions.Logging;
     using Stateless;
@@ -8,7 +9,7 @@
     public class Game
     {
         private readonly ILogger<Game> logger;
-        private readonly IChallengeProvider challengeProvider;
+        private readonly IChallengeService challengeService;
         private readonly IPlayerService playerService;
 
         public enum State { InProgress, Stopped }
@@ -17,10 +18,12 @@
         private State state;
         private StateMachine<State, Trigger> machine;
 
-        public Game(ILogger<Game> logger, IChallengeProvider challengeProvider, IPlayerService playerService)
+        public Game(ILogger<Game> logger,
+            IChallengeService challengeService,
+            IPlayerService playerService)
         {
             this.logger = logger;
-            this.challengeProvider = challengeProvider;
+            this.challengeService = challengeService;
             this.playerService = playerService;
             this.InitializeStateMachine();
         }
@@ -46,10 +49,9 @@
 
         private void OnNextTurn()
         {
-            this.CurrentChallenge = this.challengeProvider.CreateChallenge(this.CurrentChallenge);
+            this.CurrentChallenge = this.challengeService.CreateChallenge(this.CurrentChallenge);
             this.Challenges.Add(this.CurrentChallenge);
-
-            this.CurrentChallenge.CurrentPlayer = this.playerService.NextPlayer(this.CurrentChallenge.CurrentPlayer);
+            this.playerService.NextPlayer();
         }
 
         private void OnStopGame()

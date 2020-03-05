@@ -1,4 +1,4 @@
-﻿namespace WordGame.Game.Domain.Models
+﻿namespace WordGame.Game.Domain.Models.Players
 {
     using System;
 
