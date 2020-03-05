@@ -1,14 +1,12 @@
 ﻿namespace WordGame.Game.Domain.Interfaces
 {
-    using System.Threading.Tasks;
     using Models.Players;
-    using WordGame.Game.Domain.Models;
 
     public interface IGameManager
     {
-        Task ApplyApprovalAsync(PlayerInfo player, bool isApproved);
+        void ApplyApproval(PlayerInfo player, bool isApproved);
 
-        Task ApplyResolutionAsync(PlayerInfo player, string message);
+        void ApplyResolution(PlayerInfo player, string suggestion);
         
         void PlayerJoined(PlayerInfo player);
 

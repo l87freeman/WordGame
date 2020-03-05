@@ -28,17 +28,13 @@
             this.InitializeStateMachine();
         }
 
-        public Challenge CurrentChallenge { get; set; }
-
-        public List<Challenge> Challenges { get; set; } = new List<Challenge>();
-
         private void InitializeStateMachine()
         {
             this.state = State.Stopped;
             this.machine.Configure(State.InProgress)
                 .Permit(Trigger.NoPlayers, State.Stopped)
                 .Permit(Trigger.OnePlayerLeft, State.Stopped)
-                .PermitReentryIf(Trigger.NextPlayer, () => this.CurrentChallenge.IsSolved,
+                .PermitReentryIf(Trigger.NextPlayer, () => this.challengeService.CurrentChallenge.IsSolved,
                     "Current challenge is not resolved")
                 .OnEntry(this.OnNextTurn);
 
@@ -49,15 +45,13 @@
 
         private void OnNextTurn()
         {
-            this.CurrentChallenge = this.challengeService.CreateChallenge(this.CurrentChallenge);
-            this.Challenges.Add(this.CurrentChallenge);
+            this.challengeService.NextChallenge();
             this.playerService.NextPlayer();
         }
 
         private void OnStopGame()
         {
-            this.CurrentChallenge = null;
-            this.Challenges.Clear();
+            this.challengeService.Reset();
         }
     }
 }

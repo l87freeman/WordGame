@@ -32,14 +32,14 @@
             this.playerService.PlayersChanged += this.NotifyPlayersChanged;
         }
 
-        public Task ApplyApprovalAsync(PlayerInfo player, bool isApproved)
+        public void ApplyApproval(PlayerInfo player, bool isApproved)
         {
-            return Task.CompletedTask;
+            this.challengeService.AddApproval(player, isApproved);
         }
 
-        public Task ApplyResolutionAsync(PlayerInfo player, string message)
+        public void ApplyResolution(PlayerInfo player, string suggestion)
         {
-            return Task.CompletedTask;
+            this.challengeService.Suggest(player, suggestion);
         }
 
         public void PlayerJoined(PlayerInfo player)
@@ -54,15 +54,15 @@
 
         private void NotifyPlayersChanged(object sender, PlayerEventData eventData)
         {
-            var notifyTask = this.NotifyClientsAsync(eventData);
+            var message = this.messageProvider.GetMessage(eventData);
+            var notifyTask = this.NotifyClientsAsync(eventData.EventByPlayer.Connection, message);
 
             notifyTask.GetAwaiter().GetResult();
         }
 
-        private async Task NotifyClientsAsync(PlayerEventData eventData)
+        private async Task NotifyClientsAsync(string playerIdToNotNotify, string message)
         {
-            var message = this.messageProvider.GetMessage(eventData);
-            await this.hubContext.Clients.AllExcept(new List<string>{eventData.EventByPlayer.Connection}).SendAsync("Notify", message);
+            await this.hubContext.Clients.AllExcept(new List<string>{ playerIdToNotNotify }).SendAsync("Notify", message);
             this.logger.LogDebug($"Message {message} was sent");
         }
     }

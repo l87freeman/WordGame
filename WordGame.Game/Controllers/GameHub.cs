@@ -19,16 +19,18 @@
             this.gameManager = gameManager;
         }
 
-        public async Task Approved(bool isApproved)
+        public Task Approved(bool isApproved)
         {
             var player = this.GetPlayerInfo();
-            await this.gameManager.ApplyApprovalAsync(player, isApproved);
+            this.gameManager.ApplyApproval(player, isApproved);
+            return Task.CompletedTask;
         }
 
-        public async Task Resolved(string message)
+        public Task Resolved(string message)
         {
             var player = this.GetPlayerInfo();
-            await this.gameManager.ApplyResolutionAsync(player, message);
+            this.gameManager.ApplyResolution(player, message);
+            return Task.CompletedTask;
         }
 
         public override async Task OnConnectedAsync()
