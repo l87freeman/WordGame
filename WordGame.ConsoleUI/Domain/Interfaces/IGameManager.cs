@@ -7,7 +7,7 @@
     {
         event EventHandler<bool> Approved;
 
-        event EventHandler<string> Resolved;
+        event EventHandler<Suggestion> Resolved;
 
         void RefreshUi(Game game);
 

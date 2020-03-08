@@ -5,11 +5,11 @@
     using Infrastructure.Interfaces;
     using Microsoft.Extensions.Hosting;
 
-    public class GameService : IHostedService
+    public class GameApplication : IHostedService
     {
         private readonly IGameClient gameClient;
 
-        public GameService(IGameClient gameClient)
+        public GameApplication(IGameClient gameClient)
         {
             this.gameClient = gameClient;
         }

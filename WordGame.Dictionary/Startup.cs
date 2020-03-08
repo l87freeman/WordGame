@@ -6,6 +6,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace WordGame.Dictionary
 {
+    using Infrastructure;
+    using Infrastructure.Interfaces;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -19,6 +22,9 @@ namespace WordGame.Dictionary
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.Configure<DictionaryConfiguration>(this.Configuration.GetSection(nameof(DictionaryConfiguration)));
+            services.AddSingleton<IWordProvider, FileWordProvider>();
+            services.AddSingleton<IWordStorage, WordStorage>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -29,11 +35,7 @@ namespace WordGame.Dictionary
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

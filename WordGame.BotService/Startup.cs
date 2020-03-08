@@ -19,6 +19,8 @@ namespace WordGame.BotService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.Configure<DictionaryConfiguration>(this.Configuration.GetSection(nameof(DictionaryConfiguration)));
+            services.AddSingleton<IDictionaryProxy, DictionaryProxy>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -29,11 +31,7 @@ namespace WordGame.BotService
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

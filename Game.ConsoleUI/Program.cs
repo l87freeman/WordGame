@@ -20,8 +20,7 @@
 
         private static void Run()
         {
-            var app = ServiceLocator.Provider.GetRequiredService<IGameApplication>();
-            app.Run();
+            ServiceLocator.Provider.GetRequiredService<IGameApplication>().Run();
         }
 
         private static void AddUnhandledErrorListener()

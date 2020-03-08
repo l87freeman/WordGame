@@ -18,7 +18,7 @@
             string playerName = null;
             while (string.IsNullOrWhiteSpace(playerName) || playerName.Length < 2)
             {
-                playerName = baseView.WaitForInput("Enter your name (more than 2 symbols and not whitespaces)");
+                playerName = this.baseView.WaitForInput("Enter your name (more than 2 symbols and not whitespaces)");
             }
 
             return playerName;

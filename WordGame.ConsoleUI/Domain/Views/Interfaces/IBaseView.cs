@@ -4,8 +4,6 @@
 
     public interface IBaseView
     {
-        event EventHandler<EventArgs> BotInteractionChanged;
-
         bool WaitForConfirmation(string message);
 
         void ShowWarning(string message);

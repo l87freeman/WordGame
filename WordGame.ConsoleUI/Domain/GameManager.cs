@@ -1,6 +1,7 @@
 ﻿namespace WordGame.ConsoleUI.Domain
 {
     using System;
+    using System.Threading.Tasks;
     using Interfaces;
     using Models;
     using WordGame.ConsoleUI.Domain.Views.Interfaces;
@@ -13,7 +14,7 @@
 
         private readonly IDispatcher dispatcher;
 
-        public event EventHandler<string> Resolved;
+        public event EventHandler<Suggestion> Resolved;
 
         public event EventHandler<bool> Approved;
 
@@ -45,7 +46,7 @@
             this.dispatcher.PlanRoutine(() =>
             {
                 var suggestion = this.GetResolution(challenge);
-                this.Resolved?.Invoke(this, suggestion);
+                this.Resolved?.Invoke(this, suggestion );
             });
         }
 
@@ -57,15 +58,18 @@
             });
         }
 
-        private string GetResolution(Challenge challenge)
+        private Suggestion GetResolution(Challenge challenge)
         {
+            var suggestion = new Suggestion();
             if (!this.TryToResolveChallenge(challenge, out var resolution))
             {
                 this.baseView.ShowWarning("You gave up on this game");
-                resolution = string.Empty;
+                suggestion.IsNotProvided = true;
             }
 
-            return resolution;
+            suggestion.Word = resolution;
+
+            return suggestion;
         }
 
         private bool TryToResolveChallenge(Challenge challenge, out string resolution)
@@ -73,7 +77,7 @@
             bool isGiveUp = false;
             do
             {
-                resolution = this.baseView.WaitForInput($"Please provide word starting on a {challenge.Letter} or enter empty string to give up");
+                resolution = this.baseView.WaitForInput($"Please provide word starting on a [{challenge.Letter}] letter or enter empty string to give up");
                 if (string.IsNullOrWhiteSpace(resolution))
                 {
                     isGiveUp = this.baseView.WaitForConfirmation("Do you want to give up?");

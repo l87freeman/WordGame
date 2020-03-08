@@ -13,14 +13,13 @@
 
         public Suggestion CurrentSuggestion { get; set; }
 
-        [JsonIgnore]
-        public bool IsResolved => this.CurrentSuggestion != null && this.CurrentSuggestion.IsValid && this.CurrentSuggestion.Approved;
-
         public override string ToString()
         {
-            var suggestion = this.CurrentSuggestion == null ? "----" : this.Suggestions.ToString();
-            var historyString = string.Join($@"{Environment.NewLine}\t\t\t", this.Suggestions.Select(s => s.ToString()));
-            var challenge = $"Challenge for {this.Letter} letter is {this.IsResolved}, was suggested {suggestion}.{Environment.NewLine}{historyString}";
+            var suggestion = this.CurrentSuggestion == null ? "----" : this.CurrentSuggestion.ToString();
+            var historyString = string.Join($@"{Environment.NewLine} \t\t\t", this.Suggestions.Select(s => s.ToString()));
+            var challenge = $"{Environment.NewLine}Challenge for letter [{this.Letter}] letter, Approved: [{this.CurrentSuggestion?.Approved}], IsValid: [{this.CurrentSuggestion?.IsValid}], IsNotProvided: [{this.CurrentSuggestion?.IsNotProvided}]" 
+                            + $" was suggested [{suggestion}].{Environment.NewLine}" 
+                            + $"Suggestion history:{Environment.NewLine}{historyString}";
             return challenge;
         }
     }

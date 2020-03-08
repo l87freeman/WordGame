@@ -1,13 +1,17 @@
 ﻿namespace WordGame.Game.Domain.Models.Challenges
 {
     using System.Collections.Generic;
+    using Players;
 
     public class Challenge
     {
-        public Challenge(char letter)
+        public Challenge(char letter, Player player)
         {
-            Letter = letter;
+            this.Letter = letter;
+            this.ChallengeFor = player;
         }
+
+        public Player ChallengeFor { get; }
 
         public char Letter { get; }
 
@@ -18,19 +22,21 @@
         public bool IsSolved =>
             this.CurrentSuggestion != null && this.CurrentSuggestion.IsValid && this.CurrentSuggestion.Approved;
 
-        public void Suggest(string word)
+        public void AddApproval(Player player, bool isApproved)
         {
-            var suggestion = new Suggestion(word);
+            this.CurrentSuggestion.Approvals.Add((player, isApproved));
+        }
+
+        public void Suggest(Suggestion suggestion)
+        {
             this.Suggestions.Add(suggestion);
             this.CurrentSuggestion = suggestion;
         }
 
-        public override string ToString()
+        public void Resolve()
         {
-            var suggestion = this.CurrentSuggestion == null ? string.Empty : $", suggestion: {this.CurrentSuggestion}";
-            var challenge =
-                $"Challenge for letter {this.Letter} is resolved: {this.IsSolved}{suggestion}";
-            return challenge;
+            this.CurrentSuggestion.Approved = true;
+            this.CurrentSuggestion.IsValid = true;
         }
     }
 }

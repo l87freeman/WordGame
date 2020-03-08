@@ -1,7 +1,10 @@
 namespace WordGame.Game
 {
+    using System.Reflection;
+    using AutoMapper;
     using Domain;
     using Domain.Interfaces;
+    using Domain.Models;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -21,11 +24,20 @@ namespace WordGame.Game
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.Configure<GameConfiguration>(this.Configuration.GetSection(nameof(GameConfiguration)));
-            services.AddSingleton<IGameManager, GameManager>();
+            services.Configure<BotConfiguration>(this.Configuration.GetSection(nameof(BotConfiguration)));
+            services.Configure<StateManagerConfiguration>(this.Configuration.GetSection(nameof(StateManagerConfiguration)));
+            services.Configure<DictionaryProxyConfiguration>(this.Configuration.GetSection(nameof(DictionaryProxyConfiguration)));
+            services.AddSingleton<ICommunicationProxy, CommunicationProxy>();
             services.AddSingleton<IPlayerService, PlayerService>();
             services.AddSingleton<IChallengeService, ChallengeService>();
-            services.AddSingleton<IMessageProvider, MessageProvider>();
+            services.AddSingleton<IGameServiceFactory, GameServiceFactory>();
+            services.AddSingleton<IChallengeResolutionValidator, ChallengeResolutionValidator>();
+            services.AddSingleton<IDictionaryProvider, DictionaryProxy>();
+            services.AddSingleton<IBotService, BotServiceRemote>();
+            services.AddSingleton<IStateManager, StateManager>();
+
             services.AddControllers();
             services.AddSignalR();
         }

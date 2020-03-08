@@ -6,6 +6,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace WordGame.GameState
 {
+    using Storage;
+    using Storage.Interfaces;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -19,6 +22,7 @@ namespace WordGame.GameState
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddSingleton<IStateStorage, StateStorage>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -29,11 +33,7 @@ namespace WordGame.GameState
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

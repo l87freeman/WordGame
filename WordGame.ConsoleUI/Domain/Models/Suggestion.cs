@@ -8,9 +8,11 @@
 
         public bool IsValid { get; set; }
 
+        public bool IsNotProvided { get; set; }
+
         public override string ToString()
         {
-            var suggestion = $"Suggestion {this.Word} (Approved {this.Approved} IsValid {this.IsValid})";
+            var suggestion = $"Suggestion {this.Word} (Approved [{this.Approved}] IsValid [{this.IsValid}])";
             return suggestion;
         }
     }

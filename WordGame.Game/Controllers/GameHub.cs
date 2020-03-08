@@ -3,63 +3,67 @@
     using System;
     using System.Threading.Tasks;
     using Domain.Interfaces;
-    using Domain.Models;
-    using Domain.Models.Players;
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.Extensions.Logging;
 
     public class GameHub : Hub
     {
         private readonly ILogger<GameHub> logger;
-        private readonly IGameManager gameManager;
+        private readonly ICommunicationProxy communicationProxy;
 
-        public GameHub(ILogger<GameHub> logger, IGameManager gameManager)
+        public GameHub(ILogger<GameHub> logger, ICommunicationProxy communicationProxy)
         {
             this.logger = logger;
-            this.gameManager = gameManager;
+            this.communicationProxy = communicationProxy;
         }
 
-        public Task Approved(bool isApproved)
+        public Task Approved(string isApproved)
         {
             var player = this.GetPlayerInfo();
-            this.gameManager.ApplyApproval(player, isApproved);
+            this.communicationProxy.OnApprovalProvided(player.Id, isApproved);
             return Task.CompletedTask;
         }
 
-        public Task Resolved(string message)
+        public Task Resolved(Dto.Suggestion suggestion)
         {
             var player = this.GetPlayerInfo();
-            this.gameManager.ApplyResolution(player, message);
+            this.communicationProxy.OnResolutionProvided(player.Id, suggestion);
             return Task.CompletedTask;
         }
 
         public override async Task OnConnectedAsync()
         {
             var player = this.GetPlayerInfo();
-            this.logger.LogDebug($"Player {player} joined this game");
             await base.OnConnectedAsync();
-            this.gameManager.PlayerJoined(player);
+            this.communicationProxy.OnPlayerJoined(player.Id, player.Name);
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             var player = this.GetPlayerInfo();
-            this.logger.LogDebug($"Player {player} left this game");
-            await base.OnDisconnectedAsync(exception);
-            this.gameManager.PlayerLeft(player);
+            try
+            {
+                await base.OnDisconnectedAsync(exception);
+            }
+            catch (Exception e)
+            {
+                this.logger.LogError(e, $"Error occured on On Disconnecting for player {player.Id} {player.Name}");
+            }
+            
+            this.communicationProxy.OnPlayerLeft(player.Id);
         }
 
-        private PlayerInfo GetPlayerInfo()
+        private Dto.PlayerInfo GetPlayerInfo()
         {
-            var context = this.Context.GetHttpContext();
-            var connectionId = context.Connection.Id;
-            if(!context.Request.Cookies.TryGetValue("userName", out var playerName))
+            var connectionId = this.Context.ConnectionId;
+            var requestCookies = this.Context.GetHttpContext().Request.Cookies;
+            if (!requestCookies.TryGetValue("userName", out var playerName))
             {
-                this.logger.LogError($"For connection {connectionId} from {context.Connection.RemoteIpAddress} player name was not set");
-                playerName = "Jon Dow";
+                this.logger.LogError($"For connection {connectionId} from player name was not set");
+                playerName = "John Doe";
             }
 
-            return new PlayerInfo(connectionId, playerName);
+            return new Dto.PlayerInfo(connectionId, playerName);
         }
     }
 }

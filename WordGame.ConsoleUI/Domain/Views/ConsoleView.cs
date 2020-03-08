@@ -1,9 +1,6 @@
 ﻿namespace WordGame.ConsoleUI.Domain.Views
 {
     using System;
-    using System.Collections.Generic;
-    using System.Threading;
-    using System.Threading.Tasks;
     using Interfaces;
 
     public class ConsoleView : IBaseView
@@ -11,32 +8,15 @@
         private const string ConfirmSign = "Y";
         private const string DeclineSign = "N";
 
-        public ConsoleView()
-        {
-            Console.CancelKeyPress += this.BotInteraction;
-        }
-
-        private void BotInteraction(object sender, ConsoleCancelEventArgs e)
-        {
-            e.Cancel = true;
-            if (this.WaitForConfirmation("Do you wand to add/remove a bot?"))
-            {
-                this.BotInteractionChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        public event EventHandler<EventArgs> BotInteractionChanged;
-
         public void Refresh(string linesToDisplay)
         {
             Console.Clear();
-            Console.Write(linesToDisplay);
-            this.DisplayMessageInColor("To add a bot click Ctrl + C", ConsoleColor.DarkYellow);
+            this.DisplayMessageInColor(linesToDisplay, ConsoleColor.DarkYellow);
         }
 
         public void Display(string message)
         {
-            this.DisplayMessageInColor(message, ConsoleColor.DarkBlue);
+            this.DisplayMessageInColor(message, ConsoleColor.DarkMagenta);
         }
 
         public string WaitForInput(string displayMessage)
@@ -68,10 +48,13 @@
 
         private void DisplayMessageInColor(string message, ConsoleColor color)
         {
-            var initialColor = Console.BackgroundColor;
-            Console.BackgroundColor = color;
-            Console.WriteLine(message);
-            Console.BackgroundColor = initialColor;
+            lock (this)
+            {
+                var initialColor = Console.BackgroundColor;
+                Console.BackgroundColor = color;
+                Console.WriteLine(message);
+                Console.BackgroundColor = initialColor;
+            }
         }
 
         private bool TryParseResult(string stringToCheck, out bool conformed)

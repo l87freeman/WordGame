@@ -1,17 +1,26 @@
 ﻿namespace WordGame.Game.Domain.Interfaces
 {
-    using System;
-    using Models;
+    using System.Collections.Generic;
     using Models.Players;
 
     public interface IPlayerService
     {
-        event EventHandler<PlayerEventData> PlayersChanged;
+        Player CurrentPlayer { get; }
+        
+        List<Player> ActivePlayers { get; }
+        
+        List<Player> ActivePlayersNoCurrent { get; }
 
-        void Add(PlayerInfo player);
+        bool IsGameWithBot { get; }
 
-        void Remove(PlayerInfo player);
+        Player GetPlayer(string playerId);
+
+        void Add(Player player);
+
+        void Remove(Player player);
 
         void NextPlayer();
+
+        void Reset();
     }
 }

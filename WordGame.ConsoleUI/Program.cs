@@ -30,7 +30,7 @@
                     services.Configure<GameConfiguration>(configSection);
                     services.AddSingleton<IGameManager, GameManager>();
                     services.AddSingleton<IPlayerNameProvider, PlayerNameProvider>();
-                    services.AddHostedService<GameService>();
+                    services.AddHostedService<GameApplication>();
                     services.AddSingleton<IGameClient, GameClient>();
                     services.AddSingleton<IBaseView, ConsoleView>();
                     services.AddSingleton<IDispatcher, Dispatcher>();
