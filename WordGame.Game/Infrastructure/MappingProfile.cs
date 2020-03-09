@@ -1,8 +1,8 @@
-﻿namespace WordGame.Game
+﻿namespace WordGame.Game.Infrastructure
 {
     using AutoMapper;
-    using Domain.Models.Players;
     using Domain.Models.Challenges;
+    using Domain.Models.Players;
 
     public class MappingProfile : Profile
     {

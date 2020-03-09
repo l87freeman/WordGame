@@ -1,4 +1,4 @@
-﻿namespace WordGame.Game.Domain
+﻿namespace WordGame.Game.Infrastructure.Services
 {
     using System;
     using System.Collections.Generic;
@@ -6,13 +6,14 @@
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
+    using Configuration;
+    using Domain.Interfaces;
+    using Domain.Models.Players;
     using Dto;
-    using Interfaces;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
-    using Models.Players;
     using Newtonsoft.Json;
-    using Challenge = Models.Challenges.Challenge;
+    using Challenge = Domain.Models.Challenges.Challenge;
 
     public class BotServiceRemote : IBotService
     {

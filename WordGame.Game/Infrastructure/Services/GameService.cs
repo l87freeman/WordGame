@@ -1,14 +1,15 @@
-﻿namespace WordGame.Game.Domain.Models
+﻿namespace WordGame.Game.Infrastructure.Services
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Challenges;
+    using Domain.Interfaces;
+    using Domain.Models;
+    using Domain.Models.Challenges;
+    using Domain.Models.Players;
     using Interfaces;
     using Microsoft.Extensions.Logging;
-    using Players;
     using Stateless;
-
 
     public class GameService : IGameService
     {

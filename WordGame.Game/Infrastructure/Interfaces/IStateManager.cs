@@ -1,4 +1,4 @@
-﻿namespace WordGame.Game.Domain.Interfaces
+﻿namespace WordGame.Game.Infrastructure.Interfaces
 {
     using Dto;
 

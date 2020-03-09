@@ -1,15 +1,15 @@
-﻿namespace WordGame.Game.Domain
+﻿namespace WordGame.Game.Infrastructure.Services
 {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMapper;
     using Controllers;
+    using Domain.Interfaces;
+    using Domain.Models.Challenges;
+    using Domain.Models.Players;
     using Interfaces;
     using Microsoft.AspNetCore.SignalR;
-    using Models.Challenges;
-    using Models.Players;
-    using Newtonsoft.Json;
 
     public class CommunicationProxy : ICommunicationProxy
     {

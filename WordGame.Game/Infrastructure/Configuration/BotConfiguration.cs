@@ -1,4 +1,4 @@
-﻿namespace WordGame.Game
+﻿namespace WordGame.Game.Infrastructure.Configuration
 {
     using Microsoft.Extensions.Options;
 

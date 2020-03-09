@@ -1,6 +1,6 @@
-﻿namespace WordGame.Game.Domain.Interfaces
+﻿namespace WordGame.Game.Infrastructure.Interfaces
 {
-    using Models.Challenges;
+    using Domain.Models.Challenges;
 
     public interface IGameService
     {

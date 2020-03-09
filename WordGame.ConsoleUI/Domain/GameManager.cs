@@ -63,7 +63,7 @@
             var suggestion = new Suggestion();
             if (!this.TryToResolveChallenge(challenge, out var resolution))
             {
-                this.baseView.ShowWarning("You gave up on this game");
+                this.baseView.ShowWarning("You gave up on this game, bye-bye");
                 suggestion.IsNotProvided = true;
             }
 
@@ -74,17 +74,17 @@
 
         private bool TryToResolveChallenge(Challenge challenge, out string resolution)
         {
-            bool isGiveUp = false;
+            bool inGame = true;
             do
             {
                 resolution = this.baseView.WaitForInput($"Please provide word starting on a [{challenge.Letter}] letter or enter empty string to give up");
                 if (string.IsNullOrWhiteSpace(resolution))
                 {
-                    isGiveUp = this.baseView.WaitForConfirmation("Do you want to give up?");
+                    inGame = !this.baseView.WaitForConfirmation("Do you want to give up?");
                 }
-            } while (string.IsNullOrWhiteSpace(resolution) || isGiveUp);
+            } while (inGame);
 
-            return !isGiveUp;
+            return inGame;
         }
     }
 }

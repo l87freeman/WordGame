@@ -1,8 +1,8 @@
-﻿namespace WordGame.Game.Domain
+﻿namespace WordGame.Game.Infrastructure.Services
 {
+    using Domain.Interfaces;
     using Interfaces;
     using Microsoft.Extensions.Logging;
-    using Models;
 
     public class GameServiceFactory : IGameServiceFactory
     {

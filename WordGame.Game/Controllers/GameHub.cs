@@ -3,6 +3,7 @@
     using System;
     using System.Threading.Tasks;
     using Domain.Interfaces;
+    using Infrastructure.Interfaces;
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.Extensions.Logging;
 

@@ -1,8 +1,8 @@
-﻿namespace WordGame.Game.Domain.Interfaces
+﻿namespace WordGame.Game.Infrastructure.Interfaces
 {
     using System.Collections.Generic;
-    using Models.Challenges;
-    using Models.Players;
+    using Domain.Models.Challenges;
+    using Domain.Models.Players;
 
     public interface ICommunicationProxy
     {

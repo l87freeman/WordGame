@@ -5,6 +5,9 @@ namespace WordGame.Game
     using Domain;
     using Domain.Interfaces;
     using Domain.Models;
+    using Infrastructure.Configuration;
+    using Infrastructure.Interfaces;
+    using Infrastructure.Services;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;

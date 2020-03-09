@@ -1,9 +1,10 @@
-﻿namespace WordGame.Game.Domain
+﻿namespace WordGame.Game.Infrastructure.Services
 {
     using System;
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
+    using Configuration;
     using Dto;
     using Interfaces;
     using Microsoft.Extensions.Logging;
