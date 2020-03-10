@@ -46,6 +46,10 @@
             this.dispatcher.PlanRoutine(() =>
             {
                 var suggestion = this.GetResolution(challenge);
+                if (suggestion.IsNotProvided)
+                {
+                    Environment.Exit(0);
+                }
                 this.Resolved?.Invoke(this, suggestion );
             });
         }

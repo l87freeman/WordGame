@@ -7,7 +7,6 @@ EXPOSE 8087
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["WordGame.BotService/WordGame.BotService.csproj", "WordGame.BotService/"]
-COPY ["WordGame.Common/WordGame.Common.csproj", "WordGame.Common/"]
 RUN dotnet restore "WordGame.BotService/WordGame.BotService.csproj"
 COPY . .
 WORKDIR "/src/WordGame.BotService"

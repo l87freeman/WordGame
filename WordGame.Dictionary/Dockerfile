@@ -2,12 +2,12 @@
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 8086
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["WordGame.Dictionary/WordGame.Dictionary.csproj", "WordGame.Dictionary/"]
+COPY ["WordGame.Common/WordGame.Common.csproj", "WordGame.Common/"]
 RUN dotnet restore "WordGame.Dictionary/WordGame.Dictionary.csproj"
 COPY . .
 WORKDIR "/src/WordGame.Dictionary"
