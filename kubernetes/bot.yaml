@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name:  word-game-bot-service
+  labels:
+    name:  word-game-bot-service
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name:  word-game-bot-service
+    spec:
+      containers:
+      - image:  word-game-bot-service:latest
+        name:  word-game-bot-service
+        env:
+        - name:  ASPNETCORE_ENVIRONMENT
+          value:  Production
+        ports:
+        - containerPort:  8087
+          name:  tcp

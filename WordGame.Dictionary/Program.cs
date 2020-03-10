@@ -15,10 +15,10 @@ namespace WordGame.Dictionary
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .WithJsonConfiguration("appsettings.json", "appsettings.Develop.json")
+                .WithJsonConfiguration("appsettings.json", "appsettings.Development.json")
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseUrls("http://*:8086");
+                    webBuilder.UseUrls("http://localhost:8086");
                     webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
                     webBuilder.UseStartup<Startup>();
                 })

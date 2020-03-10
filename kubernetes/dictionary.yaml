@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name:  word-game-dictionary
+  labels:
+    name:  word-game-dictionary
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name:  word-game-dictionary
+    spec:
+      containers:
+      - image:  word-game-dictionary:latest
+        name:  word-game-dictionary
+        env:
+        - name:  ASPNETCORE_ENVIRONMENT
+          value:  Production
+        ports:
+        - containerPort:  8086
+          name:  tcp

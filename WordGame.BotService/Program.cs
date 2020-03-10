@@ -18,7 +18,7 @@ namespace WordGame.BotService
                 .WithJsonConfiguration("appsettings.json", "appsettings.Develop.json")
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseUrls("http://*:8087");
+                    webBuilder.UseUrls("http://localhost:8087");
                     webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
                     webBuilder.UseStartup<Startup>();
                 })

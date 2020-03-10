@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name:  word-game-state
+  labels:
+    name:  word-game-state
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name:  word-game-state
+    spec:
+      containers:
+      - image:  word-game-state:latest
+        name:  word-game-state
+        env:
+        - name:  ASPNETCORE_ENVIRONMENT
+          value:  Production
+        ports:
+        - containerPort:  8088
+          name:  tcp
