@@ -18,7 +18,7 @@ namespace WordGame.Dictionary
                 .WithJsonConfiguration("appsettings.json", "appsettings.Development.json")
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseUrls("http://localhost:8086");
+                    webBuilder.UseUrls("http://0.0.0.0:8086", "http://0.0.0.0:8080", "http://0.0.0.0:80");
                     webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
                     webBuilder.UseStartup<Startup>();
                 })

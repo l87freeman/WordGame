@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: word-game-dictionary-service
+spec:
+  selector:
+    app: word-game-dictionary
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    name: http
+    port: 8086
+    targetPort: 8086

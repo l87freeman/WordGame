@@ -4,15 +4,20 @@ metadata:
   name:  word-game-dictionary
   labels:
     name:  word-game-dictionary
+    app: word-game-dictionary
 spec:
+  selector:
+    matchLabels:
+      app: word-game-dictionary
   replicas: 1
   template:
     metadata:
       labels:
-        name:  word-game-dictionary
+        name: word-game-dictionary
+        app: word-game-dictionary
     spec:
       containers:
-      - image:  word-game-dictionary:latest
+      - image:  localhost:5000/word-game-dictionary:latest
         name:  word-game-dictionary
         env:
         - name:  ASPNETCORE_ENVIRONMENT
@@ -20,3 +25,8 @@ spec:
         ports:
         - containerPort:  8086
           name:  tcp
+      imagePullSecrets:
+      - name: regcred
+      
+#kubectl create secret docker-registry regcred --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>
+#kubectl get secret regcred --output=yaml
