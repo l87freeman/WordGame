@@ -25,8 +25,8 @@ spec:
         ports:
         - containerPort:  8086
           name:  tcp
-      imagePullSecrets:
-      - name: regcred
+      #imagePullSecrets:
+      #- name: regcred
       
 #kubectl create secret docker-registry regcred --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>
 #kubectl get secret regcred --output=yaml

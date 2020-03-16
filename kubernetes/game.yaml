@@ -11,9 +11,10 @@ spec:
     metadata:
       labels:
         name:  word-game-game
+        app: word-game-game
     spec:
       containers:
-      - image:  word-game-game:latest
+      - image:  localhost:5000/word-game-game:latest
         name:  word-game-game
         env:
         - name:  ASPNETCORE_ENVIRONMENT

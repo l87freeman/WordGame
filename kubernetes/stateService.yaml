@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name:  word-game-state-service
+spec:
+  selector:
+    app:  word-game-state
+  type:  LoadBalancer
+  ports:
+  - name:  tcp
+    port:  8088
+    targetPort:  8088

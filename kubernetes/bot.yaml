@@ -4,15 +4,17 @@ metadata:
   name:  word-game-bot-service
   labels:
     name:  word-game-bot-service
+    app: word-game-bot-service
 spec:
   replicas: 1
   template:
     metadata:
       labels:
         name:  word-game-bot-service
+        app: word-game-bot-service
     spec:
       containers:
-      - image:  word-game-bot-service:latest
+      - image:  localhost:5000/word-game-bot-service:latest
         name:  word-game-bot-service
         env:
         - name:  ASPNETCORE_ENVIRONMENT
@@ -20,8 +22,8 @@ spec:
         ports:
         - containerPort:  8087
           name:  tcp
-      imagePullSecrets:
-      - name: regcred
+      #imagePullSecrets:
+      #- name: regcred
       
 #kubectl create secret docker-registry regcred --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>
 #kubectl get secret regcred --output=yaml

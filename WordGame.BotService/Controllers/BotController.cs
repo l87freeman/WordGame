@@ -32,6 +32,14 @@ namespace WordGame.BotService.Controllers
             return new Suggestion { Word = suggestion, IsNotProvided = suggestion == null };
         }
 
+        [HttpGet("words/{letter}")]
+        public async Task<IEnumerable<string>> Test(char letter)
+        {
+            var words = (await this.proxy.GetWords(letter)).Select(w => w.ToLower());
+
+            return words;
+        }
+
         private string GetRandomSuggestion(IEnumerable<string> notUsed)
         {
             var list = notUsed.ToList();

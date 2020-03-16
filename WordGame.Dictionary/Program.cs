@@ -5,6 +5,7 @@ namespace WordGame.Dictionary
 {
     using System.IO;
     using Common;
+    using Microsoft.Extensions.Configuration;
 
     public class Program
     {
@@ -18,10 +19,11 @@ namespace WordGame.Dictionary
                 .WithJsonConfiguration("appsettings.json", "appsettings.Development.json")
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseUrls("http://0.0.0.0:8086", "http://0.0.0.0:8080", "http://0.0.0.0:80");
+                    webBuilder.UseUrls("http://0.0.0.0:8086");
                     webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
                     webBuilder.UseStartup<Startup>();
                 })
-                .WithSerilog();
+                .WithSerilog()
+        ;
     }
 }

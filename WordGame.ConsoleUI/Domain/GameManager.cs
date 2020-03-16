@@ -50,7 +50,7 @@
                 {
                     Environment.Exit(0);
                 }
-                this.Resolved?.Invoke(this, suggestion );
+                this.Resolved?.Invoke(this, suggestion);
             });
         }
 
@@ -79,14 +79,12 @@
         private bool TryToResolveChallenge(Challenge challenge, out string resolution)
         {
             bool inGame = true;
-            do
+
+            resolution = this.baseView.WaitForInput($"Please provide word starting on a [{challenge.Letter}] letter or enter empty string to give up");
+            if (string.IsNullOrWhiteSpace(resolution))
             {
-                resolution = this.baseView.WaitForInput($"Please provide word starting on a [{challenge.Letter}] letter or enter empty string to give up");
-                if (string.IsNullOrWhiteSpace(resolution))
-                {
-                    inGame = !this.baseView.WaitForConfirmation("Do you want to give up?");
-                }
-            } while (inGame);
+                inGame = !this.baseView.WaitForConfirmation("Do you want to give up?");
+            }
 
             return inGame;
         }

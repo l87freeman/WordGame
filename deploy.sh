@@ -17,7 +17,30 @@ set -ev
 #docker push repository/project:$TAG
 #docker push repository/project:latest
 
-docker build -f ./WordGame.Dictionary/Dockerfile -t word-game-dictionary:latest .
-docker build -f ./WordGame.Game/Dockerfile -t word-game-game:latest .
-docker build -f ./WordGame.GameState/Dockerfile -t word-game-state:latest .
-docker build -f ./WordGame.BotService/Dockerfile -t word-game-bot-service:latest .
+kubectl delete -f ./kubernetes/dictionary.yaml
+kubectl delete -f ./kubernetes/dictionaryService.yaml
+kubectl delete -f ./kubernetes/bot.yaml
+kubectl delete -f ./kubernetes/botService.yaml
+kubectl delete -f ./kubernetes/state.yaml
+kubectl delete -f ./kubernetes/stateService.yaml
+kubectl delete -f ./kubernetes/game.yaml
+kubectl delete -f ./kubernetes/gameService.yaml
+
+docker build -f ./WordGame.Dictionary/Dockerfile -t localhost:5000/word-game-dictionary:latest . --no-cache
+docker build -f ./WordGame.Game/Dockerfile -t localhost:5000/word-game-game:latest . --no-cache
+docker build -f ./WordGame.GameState/Dockerfile -t localhost:5000/word-game-state:latest . --no-cache
+docker build -f ./WordGame.BotService/Dockerfile -t localhost:5000/word-game-bot-service:latest . --no-cache
+
+docker push localhost:5000/word-game-dictionary:latest
+docker push localhost:5000/word-game-game:latest
+docker push localhost:5000/word-game-state:latest
+docker push localhost:5000/word-game-bot-service:latest
+
+kubectl apply -f ./kubernetes/dictionary.yaml
+kubectl apply -f ./kubernetes/dictionaryService.yaml
+kubectl apply -f ./kubernetes/bot.yaml
+kubectl apply -f ./kubernetes/botService.yaml
+kubectl apply -f ./kubernetes/state.yaml
+kubectl apply -f ./kubernetes/stateService.yaml
+kubectl apply -f ./kubernetes/game.yaml
+kubectl apply -f ./kubernetes/gameService.yaml

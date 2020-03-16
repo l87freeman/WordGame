@@ -4,15 +4,17 @@ metadata:
   name:  word-game-state
   labels:
     name:  word-game-state
+    app: word-game-state
 spec:
   replicas: 1
   template:
     metadata:
       labels:
         name:  word-game-state
+        app: word-game-state
     spec:
       containers:
-      - image:  word-game-state:latest
+      - image:  localhost:5000/word-game-state:latest
         name:  word-game-state
         env:
         - name:  ASPNETCORE_ENVIRONMENT

@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: word-game-bot-service-service
+spec:
+  selector:
+    app: word-game-bot-service
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    name: http
+    port: 8087
+    targetPort: 8087

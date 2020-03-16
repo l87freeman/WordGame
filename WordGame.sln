@@ -7,17 +7,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTests", "GameTests\Game
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.ConsoleUI", "Game.ConsoleUI\Game.ConsoleUI.csproj", "{5213C3C0-6BEB-4514-82EC-6DC5916E585A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordGame.Game", "WordGame.Game\WordGame.Game.csproj", "{3E25651D-74C5-4793-BA1F-AEF47A8AAB29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordGame.Game", "WordGame.Game\WordGame.Game.csproj", "{3E25651D-74C5-4793-BA1F-AEF47A8AAB29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordGame.GameState", "WordGame.GameState\WordGame.GameState.csproj", "{8CC8A3DA-E2A2-4FD0-B922-CB94D733B318}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordGame.GameState", "WordGame.GameState\WordGame.GameState.csproj", "{8CC8A3DA-E2A2-4FD0-B922-CB94D733B318}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordGame.BotService", "WordGame.BotService\WordGame.BotService.csproj", "{D5769016-7E37-4377-A945-F815AB8B26D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordGame.BotService", "WordGame.BotService\WordGame.BotService.csproj", "{D5769016-7E37-4377-A945-F815AB8B26D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordGame.Dictionary", "WordGame.Dictionary\WordGame.Dictionary.csproj", "{151569DB-2EFC-4DBB-A65D-5ABF7E06F41F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordGame.Dictionary", "WordGame.Dictionary\WordGame.Dictionary.csproj", "{151569DB-2EFC-4DBB-A65D-5ABF7E06F41F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordGame.ConsoleUI", "WordGame.ConsoleUI\WordGame.ConsoleUI.csproj", "{24D1665C-2EC4-4EDC-B3EA-B77A5067769A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordGame.ConsoleUI", "WordGame.ConsoleUI\WordGame.ConsoleUI.csproj", "{24D1665C-2EC4-4EDC-B3EA-B77A5067769A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordGame.Common", "WordGame.Common\WordGame.Common.csproj", "{E44BACB5-839E-44CB-A8A6-BFAD99107120}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordGame.Common", "WordGame.Common\WordGame.Common.csproj", "{E44BACB5-839E-44CB-A8A6-BFAD99107120}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
