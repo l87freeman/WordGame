@@ -58,7 +58,7 @@
                 .OnEntry(this.OnGameStopped);
 
             this.gameStateMachine.Configure(GameState.InProgress)
-                .PermitIf(EventType.PlayerLeft, GameState.Stopped, () => this.playerService.ActivePlayers.Count == 0 || this.playerService.IsGameWithBot && this.playerService.ActivePlayers.Count == 1)
+                .PermitIf(EventType.PlayerLeft, GameState.Stopped, () => this.playerService.ActivePlayers.Count <= 1)
                 .OnEntry(this.OnGameStarted);
         }
 
@@ -206,7 +206,7 @@
         private void OnGameStopped(StateMachine<GameState, EventType>.Transition transition)
         {
             this.LogTransition(transition);
-
+            this.communicationProxy.NewChallenge(this.playerService.CurrentPlayer, this.challengeService.CurrentChallenge);
             this.challengeService.Reset();
             this.playerService.Reset();
         }
